@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:layout_marginBottom="5dp"
+    android:padding="5dp"
+    android:background="#333333"
+    android:gravity="center_vertical|right"
+    android:layoutDirection="rtl"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="10dp"
+        android:src="@drawable/star" />
+
+    <il.ac.shenkar.endofyearshenkar.utils.BoldAlefTextView
+        android:id="@+id/route_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:text="@string/route_name_place_holder"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/white" />
+</LinearLayout>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:id="@+id/imageButtonPlay"
+        android:src="@drawable/sound"/>
+
+    <il.ac.shenkar.endofyearshenkar.utils.AlefTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="              קטע שמיעה           "
+        android:id="@+id/textView"
+        android:layout_gravity="center_horizontal|top" />
+
+    <ImageButton
+        android:layout_width="60dp"
+        android:layout_height="62dp"
+        android:id="@+id/imageButtonStop"
+        android:src="@drawable/stop"/>
+
+
+</LinearLayout>

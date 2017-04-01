@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="il.ac.shenkar.endofyearshenkar.activities.GeneralActivity">
+
+<LinearLayout
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:layout_marginBottom="130dp"
+android:layoutDirection="rtl"
+android:orientation="vertical"
+android:weightSum="1">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="@color/shenkarYellow"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <il.ac.shenkar.endofyearshenkar.utils.BoldAlefTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/shenkarYellow"
+        android:gravity="center"
+        android:text="@string/btn_general"
+        android:textColor="@color/black"
+        android:layout_marginBottom="5dp"
+        android:textSize="25dp"
+        android:textDirection="rtl"
+        android:textStyle="bold" />
+
+</LinearLayout>
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <il.ac.shenkar.endofyearshenkar.utils.AlefTextView
+        android:id="@+id/txtGeneralInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text=
+            "
+אפליקציית תערוכת סוף שנה שנקר 2016 \n
+אפליקציה זו מאפשרת למבקרים: \n
+1. להתמצא בתערוכה דרך מפה כללית של
+שנקר ומפות של המחלקות השונות. \n
+2. לנווט לפרוייקטים ספציפים. \n
+3. לקבל מידע נוסף על הפרויקטים והסטודנטים. \n
+4. לקבל המלצות למסלולים על פי תמה משותפת. \n
+5. לשתף את הפרויקטים ברשתות החברתיות. \n
+\n
+אודות:\n
+האפליקציה פותחה במסגרת הקורס: מחשוב מובייל מתקדם, במחלקה להנדסת תוכנה. \n
+מרצה: ד״ר אמנון דקל \n
+מתרגל: מר כדן אוז׳לבו\n
+עיצוב: גיא שומרון\n
+פיתוח צד Client: לירון שרעבי\n
+פיתוח צד Server: גרגורי קונדרטנקו\n
+מפות ומיקום: אורן משה ותום גולדברג\n
+וידאו וסאונד: תבור כהן\n
+קוד QR: שגיא מדעי\n
+\n
+"
+        android:textSize="18dp"
+        android:textColor="@color/black"
+        android:textDirection="rtl" />
+
+</ScrollView>
+
+</LinearLayout>
+
+<LinearLayout
+android:layout_width="match_parent"
+android:layout_height="130dp"
+android:layout_gravity="center_horizontal|bottom"
+android:gravity="center"
+android:orientation="horizontal">
+
+
+<ImageView
+    android:id="@+id/alldepartments"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:src="@drawable/alldepartments"
+    android:scaleType="fitXY" />
+
+</LinearLayout>
+    </FrameLayout>
+

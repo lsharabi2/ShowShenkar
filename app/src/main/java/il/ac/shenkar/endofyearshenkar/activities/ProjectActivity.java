@@ -59,7 +59,6 @@ public class ProjectActivity extends ShenkarActivity {
     private String urlVideo;
     private String urlAudio;
     private String idContent;
-    private ProgressDialog mProgressDialog;
     private RequestQueue mRequestQueue;
     private ImageButton playVd;
     private ImageButton playSD;
@@ -364,6 +363,8 @@ public class ProjectActivity extends ShenkarActivity {
         final String url = JsonURIs.getProjectByIdUri(projectId);
 
         new AsyncTask<Void, Void, ProjectJson>() {
+            private ProgressDialog mProgressDialog;
+
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
@@ -388,9 +389,11 @@ public class ProjectActivity extends ShenkarActivity {
 
                     return response;
                 } catch (InterruptedException e) {
-                    Log.d(TAG, "interrupted");
+                    Log.d(TAG, "interrupted error");
+                    e.printStackTrace();
                 } catch (ExecutionException e) {
-                    Log.d(TAG, "execution");
+                    Log.d(TAG, "execution error");
+                    e.printStackTrace();
                 } catch (TimeoutException e) {
                     e.printStackTrace();
                 }

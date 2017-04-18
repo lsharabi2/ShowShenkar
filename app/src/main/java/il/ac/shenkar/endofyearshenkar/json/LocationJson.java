@@ -4,6 +4,7 @@ package il.ac.shenkar.endofyearshenkar.json;
  * Created by User on 05/04/2017.
  */
 public class LocationJson {
+    private long id;
     private String description;
     private long lat;
     private long lng;
@@ -39,5 +40,15 @@ public class LocationJson {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public long getId()
+    {
+        return id;
+    }
+
+    public void setId(long id)
+    {
+        this.id = id;
     }
 }

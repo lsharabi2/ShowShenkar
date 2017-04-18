@@ -14,14 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import il.ac.shenkar.endofyearshenkar.R;
-import il.ac.shenkar.endofyearshenkar.utils.DownloadImageTask;
 import il.ac.shenkar.endofyearshenkar.adapters.DepProjectsRecyclerAdapter;
+import il.ac.shenkar.endofyearshenkar.json.ProjectJson;
+import il.ac.shenkar.endofyearshenkar.utils.DownloadImageTask;
 import il.ac.shenkar.showshenkar.backend.departmentApi.model.Department;
-import il.ac.shenkar.showshenkar.backend.projectApi.model.Project;
 
 
 public class DepartmentActivity extends ShenkarActivity {
-    private List<Project> mProjects;
+    private static String TAG = "DepartmentActivity";
+    private List<ProjectJson> mProjects;
     private Department mDepartment;
     private Long mDepartmentId;
     private String mDepartmentName;
@@ -63,7 +64,39 @@ public class DepartmentActivity extends ShenkarActivity {
     @Override
     public void onResume() {
         super.onResume();
-        adapter.refresh(mDepartmentName);
+        adapter.refresh(mDepartmentId);
+    }
+
+    public void updateDepartmentById() {
+        /*
+        // Instantiate the RequestQueue.
+        mRequestQueue = Volley.newRequestQueue(this);
+        String url = "https://shenkar-show.herokuapp.com/departments/id/1";
+
+        GsonRequest departmentRequest = new GsonRequest(url, DepartmentJson.class, null,
+                new Response.Listener<DepartmentJson>() {
+                    @Override
+                    public void onResponse(DepartmentJson response) {
+                        TextView titleTextView = (TextView) findViewById(R.id.title);
+                        titleTextView.setText(response.getName());
+
+                        TextView locationTextView = (TextView) findViewById(R.id.location);
+                        locationTextView.setText(response.getLocationDescription());
+
+                        final ImageView imageView = (ImageView) findViewById(R.id.image);
+                        new DownloadImageTask(imageView).execute(response.getLargeImageUrl());
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(DepartmentActivity.this, "Failed to retrieve department information", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        departmentRequest.setTag(TAG);
+        // Add the request to the RequestQueue.
+        mRequestQueue.add(departmentRequest);
+        */
     }
 
     public void showDepartmentLocation(View v) {
@@ -72,5 +105,14 @@ public class DepartmentActivity extends ShenkarActivity {
         i.putExtra("objectType", "department");
         startActivity(i);
     }
+/*
+    @Override
+    protected void onStop() {
+        super.onStop();
 
+        if (mRequestQueue != null) {
+            mRequestQueue.cancelAll(TAG);
+        }
+    }
+*/
 }

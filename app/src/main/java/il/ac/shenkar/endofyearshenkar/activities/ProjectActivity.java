@@ -1,6 +1,5 @@
 package il.ac.shenkar.endofyearshenkar.activities;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -11,45 +10,47 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.json.jackson2.JacksonFactory;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.RequestFuture;
+import com.android.volley.toolbox.Volley;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import il.ac.shenkar.endofyearshenkar.R;
 import il.ac.shenkar.endofyearshenkar.adapters.ProjectGalleryRecyclerAdapter;
-
+import il.ac.shenkar.endofyearshenkar.json.GsonRequest;
+import il.ac.shenkar.endofyearshenkar.json.JsonURIs;
+import il.ac.shenkar.endofyearshenkar.json.ProjectJson;
+import il.ac.shenkar.endofyearshenkar.model.DBHelper;
 import il.ac.shenkar.showshenkar.backend.contentApi.ContentApi;
 import il.ac.shenkar.showshenkar.backend.contentApi.model.Content;
-import il.ac.shenkar.showshenkar.backend.contentApi.model.Info;
 import il.ac.shenkar.showshenkar.backend.contentApi.model.Media;
 import il.ac.shenkar.showshenkar.backend.projectApi.ProjectApi;
-import il.ac.shenkar.showshenkar.backend.projectApi.model.Project;
-import il.ac.shenkar.endofyearshenkar.model.DBHelper;
-import il.ac.shenkar.endofyearshenkar.utils.Constants;
 
 public class ProjectActivity extends ShenkarActivity {
 
+    private static String TAG = "ProjectActivity";
+
     final Context context = this;
     private ProjectGalleryRecyclerAdapter adapter;
-    private List<Media> mProjectTumbs;
+    private List<String> mProjectImages;
     private DBHelper dbhelper;
     private ContentApi contentApi;
     private Content content;
@@ -59,34 +60,7 @@ public class ProjectActivity extends ShenkarActivity {
     private String urlAudio;
     private String idContent;
     private ProgressDialog mProgressDialog;
-
-    class ProjectViewHolder {
-        TextView txtProjectName;
-        TextView txtStudentName;
-        TextView txtProjectDesc;
-        ImageView imgScreenShot;
-
-        public ProjectViewHolder(Activity activity) {
-            txtProjectName = (TextView) activity.findViewById(R.id.txtProjectName);
-            txtStudentName = (TextView) activity.findViewById(R.id.txtStudentName);
-            txtProjectDesc = (TextView) activity.findViewById(R.id.txtProjectDesc);
-            imgScreenShot = (ImageView) activity.findViewById(R.id.imgScreenShot);
-            imgScreenShot.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (adapter == null)
-                    {
-                        return;
-                    }
-
-                    Intent i = new Intent(ProjectActivity.this, ProjectImageActivity.class);
-                    i.putExtra("url", adapter.getCurrentMainImageUrl());
-                    startActivity(i);
-                }
-            });
-        }
-    }
-
+    private RequestQueue mRequestQueue;
     private ImageButton playVd;
     private ImageButton playSD;
     private ImageButton playVdGray;
@@ -95,7 +69,7 @@ public class ProjectActivity extends ShenkarActivity {
     private ProjectViewHolder views;
     private String project;
     private Long projectId;
-    private Project mProject;
+    private ProjectJson mProject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,17 +93,25 @@ public class ProjectActivity extends ShenkarActivity {
         RecyclerView rvProjects = (RecyclerView) findViewById(R.id.project_tumbs);
         rvProjects.setLayoutManager(new LinearLayoutManager(this));
 
-        mProjectTumbs = new ArrayList<>();
-        adapter = new ProjectGalleryRecyclerAdapter(this, views.imgScreenShot, mProjectTumbs);
+        mProjectImages = new ArrayList<>();
+        adapter = new ProjectGalleryRecyclerAdapter(this, views.imgScreenShot, mProjectImages);
         rvProjects.setAdapter(adapter);
         mediaPlayer = new MediaPlayer();
         playSD.setVisibility(View.GONE);
         playVd.setVisibility(View.GONE);
         playVdGray.setVisibility(View.GONE);
         playSDGray.setVisibility(View.GONE);
-        refreshMedia();
+
+        refreshProjectById();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshProjectById();
+    }
+
+/*
     public void refreshMedia() {
         dbhelper = new DBHelper();
         projectApi = dbhelper.getProjectApi();
@@ -269,14 +251,182 @@ public class ProjectActivity extends ShenkarActivity {
                 super.onProgressUpdate();
             }
         }.execute();
-    }
+    }*/
 
     @Override
-    public void onResume() {
-        super.onResume();
-        refresh();
+    protected void onStop() {
+        super.onStop();
+
+        if (mRequestQueue != null) {
+            mRequestQueue.cancelAll(TAG);
+        }
     }
 
+    public void refreshProjectData() {
+        if (mProject == null) {
+            return;
+        }
+
+        views.txtProjectName.setText(mProject.getName());
+
+        List<String> names = mProject.getStudentNames();
+        String namesStr = "";
+        for (String name : names) {
+            namesStr += name + "\n";
+        }
+
+        views.txtStudentName.setText(namesStr);
+
+        views.txtProjectDesc.setText(mProject.getDescription());
+
+        adapter.refresh(mProject.getImagesUrls());
+
+        if ((mProject.getVideoUrl() == null) || mProject.getVideoUrl().isEmpty()) {
+            playVdGray.setVisibility(View.VISIBLE);
+            playVdGray.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(ProjectActivity.this, "אין וידאו לפרוייקט", Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            playVd.setVisibility(View.VISIBLE);
+            playVd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(ProjectActivity.this, YouTubeActivity.class);
+                    i.putExtra("url", mProject.getVideoUrl());
+                    startActivity(i);
+                }
+            });
+        }
+
+        if ((mProject.getSoundUrl() == null) || mProject.getSoundUrl().isEmpty()) {
+            playSDGray.setVisibility(View.VISIBLE);
+            playSDGray.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(ProjectActivity.this, "אין קטע שמיעה", Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            playSD.setVisibility(View.VISIBLE);
+            playSD.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Dialog dialogT = new Dialog(context);
+                    dialogT.setContentView(R.layout.custom);
+                    ImageButton dialogButtonPlay = (ImageButton) dialogT.findViewById(R.id.imageButtonPlay);
+                    // if button is clicked, close the custom dialog
+                    dialogButtonPlay.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //  String url = "http://programmerguru.com/android-tutorial/wp-content/uploads/2013/04/hosannatelugu.mp3";
+                            String url = mProject.getSoundUrl();
+                            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                            try {
+                                mediaPlayer.setDataSource(url);
+                            } catch (IllegalArgumentException e) {
+
+                            } catch (SecurityException e) {
+
+                            } catch (IllegalStateException e) {
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                mediaPlayer.prepare();
+                            } catch (IllegalStateException e) {
+
+                            } catch (IOException e) {
+
+                            }
+                            mediaPlayer.start();
+                        }
+                    });
+                    ImageButton dialogButtonStop = (ImageButton) dialogT.findViewById(R.id.imageButtonStop);
+                    // if button is clicked, close the custom dialog
+                    dialogButtonStop.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mediaPlayer.stop();
+                        }
+                    });
+                    dialogT.show();
+                }
+            });
+        }
+    }
+
+    public void refreshProjectById() {
+
+        final String url = JsonURIs.getProjectByIdUri(projectId);
+
+        new AsyncTask<Void, Void, ProjectJson>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                mProgressDialog = ProgressDialog.show(ProjectActivity.this, "טוען נתונים", "מעדכן נתוני פרויקט", true, true);
+            }
+
+            @Override
+            protected ProjectJson doInBackground(Void... params) {
+                try {
+
+                    // Instantiate the RequestQueue.
+                    RequestQueue requestQueue = Volley.newRequestQueue(ProjectActivity.this);
+
+                    RequestFuture<ProjectJson> future = RequestFuture.newFuture();
+
+                    GsonRequest req = new GsonRequest(url, ProjectJson.class, null, future, future);
+
+                    // Add the request to the RequestQueue.
+                    requestQueue.add(req);
+
+                    ProjectJson response = future.get(3, TimeUnit.SECONDS);
+
+                    return response;
+                } catch (InterruptedException e) {
+                    Log.d(TAG, "interrupted");
+                } catch (ExecutionException e) {
+                    Log.d(TAG, "execution");
+                } catch (TimeoutException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(ProjectJson project) {
+                mProgressDialog.dismiss();
+                if (project != null) {
+                    mProject = project;
+                    refreshProjectData();
+                }
+            }
+
+        }.execute();
+    }
+
+    public void shareProject(View v) {
+
+        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+        Uri screenshotUri = Uri.parse("android.resource://il.ac.shenkar.showshenkar.activities/*");
+        try {
+            InputStream stream = getContentResolver().openInputStream(screenshotUri);
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        sharingIntent.setType("image/jpeg");
+        sharingIntent.putExtra(Intent.EXTRA_STREAM, screenshotUri);
+        startActivity(Intent.createChooser(sharingIntent, "Share Project Using"));
+        // TODO: implement share project
+        Toast.makeText(this, "שתף פרויקט", Toast.LENGTH_LONG).show();
+        MyRouteActivity.addProjectId(this, projectId);
+    }
+ /*
     public void refresh() {
         final ProjectApi projectApi = new ProjectApi.Builder(
                 AndroidHttp.newCompatibleTransport(),
@@ -354,26 +504,7 @@ public class ProjectActivity extends ShenkarActivity {
                 }
             }
         }.execute();
-    }
-
-
-    public void shareProject(View v) {
-
-        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-        Uri screenshotUri = Uri.parse("android.resource://il.ac.shenkar.showshenkar.activities/*");
-        try {
-            InputStream stream = getContentResolver().openInputStream(screenshotUri);
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        sharingIntent.setType("image/jpeg");
-        sharingIntent.putExtra(Intent.EXTRA_STREAM, screenshotUri);
-        startActivity(Intent.createChooser(sharingIntent, "Share Project Using"));
-        // TODO: implement share project
-        Toast.makeText(this, "שתף פרויקט", Toast.LENGTH_LONG).show();
-        MyRouteActivity.addProjectId(this, projectId);
-    }
+    }*/
 
     public void showLocation(View v) {
         Intent i = new Intent(this, MapActivity.class);
@@ -383,13 +514,13 @@ public class ProjectActivity extends ShenkarActivity {
     }
 
     public void sendEmail(View v) {
-        if (mProject.getStudentEMail() == null || mProject.getStudentEMail().isEmpty()) {
+        if (mProject.getStudentEmails() == null || mProject.getStudentEmails().isEmpty()) {
             Toast.makeText(this, "אין מיילים זמינים לפרויקט", Toast.LENGTH_LONG).show();
             return;
         }
 
         List<String> emails = new ArrayList<>();
-        for (String email : mProject.getStudentEMail()) {
+        for (String email : mProject.getStudentEmails()) {
             emails.add(email);
         }
 
@@ -403,6 +534,32 @@ public class ProjectActivity extends ShenkarActivity {
             Toast.makeText(this, "שלחו מייל ליוצר/ת", Toast.LENGTH_LONG).show();
         } catch (ActivityNotFoundException ex) {
             Toast.makeText(this, "No email clients installed", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    class ProjectViewHolder {
+        TextView txtProjectName;
+        TextView txtStudentName;
+        TextView txtProjectDesc;
+        ImageView imgScreenShot;
+
+        public ProjectViewHolder(Activity activity) {
+            txtProjectName = (TextView) activity.findViewById(R.id.txtProjectName);
+            txtStudentName = (TextView) activity.findViewById(R.id.txtStudentName);
+            txtProjectDesc = (TextView) activity.findViewById(R.id.txtProjectDesc);
+            imgScreenShot = (ImageView) activity.findViewById(R.id.imgScreenShot);
+            imgScreenShot.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (adapter == null) {
+                        return;
+                    }
+
+                    Intent i = new Intent(ProjectActivity.this, ProjectImageActivity.class);
+                    i.putExtra("url", adapter.getCurrentMainImageUrl());
+                    startActivity(i);
+                }
+            });
         }
     }
 }

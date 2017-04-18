@@ -13,15 +13,13 @@ import java.util.List;
 import il.ac.shenkar.endofyearshenkar.R;
 import il.ac.shenkar.endofyearshenkar.utils.DownloadImageTask;
 
-import il.ac.shenkar.showshenkar.backend.contentApi.model.Media;
-
 public class ProjectGalleryRecyclerAdapter extends RecyclerView.Adapter<ProjectGalleryRecyclerAdapter.CustomViewHolder> {
     private final ImageView mMainImage;
-    private List<Media> mImages;
+    private List<String> mImages;
     private Context mContext;
     private String currentMainImageUrl;
 
-    public ProjectGalleryRecyclerAdapter(Context context, ImageView mainImage, List<Media> mImages) {
+    public ProjectGalleryRecyclerAdapter(Context context, ImageView mainImage, List<String> mImages) {
         this.mImages = mImages;
         this.mContext = context;
         this.mMainImage = mainImage;
@@ -41,15 +39,26 @@ public class ProjectGalleryRecyclerAdapter extends RecyclerView.Adapter<ProjectG
 
     @Override
     public void onBindViewHolder(CustomViewHolder customViewHolder, int i) {
-        Media image = mImages.get(i);
-
-        customViewHolder.imgUrl = image.getUrl();
-        new DownloadImageTask(customViewHolder.imgTumb).execute(image.getUrl());
+        customViewHolder.imgUrl = mImages.get(i);
+        new DownloadImageTask(customViewHolder.imgTumb).execute(mImages.get(i));
     }
 
     @Override
     public int getItemCount() {
         return (null != mImages ? mImages.size() : 0);
+    }
+
+    public void refresh(final List<String> images) {
+        boolean isNew = mImages.isEmpty();
+        mImages.clear();
+
+        if (isNew && !mImages.isEmpty()) {
+            new DownloadImageTask(mMainImage).execute(mImages.get(0));
+            currentMainImageUrl = mImages.get(0);
+        }
+
+        notifyDataSetChanged();
+
     }
 
     public class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -68,30 +77,5 @@ public class ProjectGalleryRecyclerAdapter extends RecyclerView.Adapter<ProjectG
             mMainImage.setImageBitmap(((BitmapDrawable) image.getDrawable()).getBitmap());
             ProjectGalleryRecyclerAdapter.this.currentMainImageUrl = imgUrl;
         }
-    }
-
-    public void refresh(final List<Media> medias) {
-        boolean isNew = mImages.isEmpty();
-        mImages.clear();
-
-        if (medias == null)
-        {
-            return;
-        }
-
-        for (Media media : medias) {
-            if ("Image".equalsIgnoreCase(media.getType())) {
-                mImages.add(media);
-            }
-        }
-
-        if (isNew && !mImages.isEmpty())
-        {
-            new DownloadImageTask(mMainImage).execute(mImages.get(0).getUrl());
-            currentMainImageUrl = mImages.get(0).getUrl();
-        }
-
-        notifyDataSetChanged();
-
     }
 }

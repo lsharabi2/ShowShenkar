@@ -3,7 +3,6 @@ package il.ac.shenkar.endofyearshenkar.adapters;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,33 +10,38 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.json.jackson2.JacksonFactory;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 
-import java.io.IOException;
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import il.ac.shenkar.endofyearshenkar.R;
+import il.ac.shenkar.endofyearshenkar.json.DepartmentJson;
+import il.ac.shenkar.endofyearshenkar.json.JsonURIs;
 import il.ac.shenkar.endofyearshenkar.utils.DownloadImageTask;
 
-import il.ac.shenkar.showshenkar.backend.departmentApi.DepartmentApi;
-import il.ac.shenkar.showshenkar.backend.departmentApi.model.Department;
-import il.ac.shenkar.endofyearshenkar.utils.Constants;
+public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
 
-public class DepGridViewAdapter extends ArrayAdapter<Department> {
-
+    private final RequestQueue requestQueue;
     private Context context;
     private int layoutResourceId;
-    private List<Department> data;
+    private List<DepartmentJson> data;
     private ProgressDialog mProgressDialog;
 
-    public DepGridViewAdapter(Context context, int layoutResourceId, List<Department> data) {
+    public DepGridViewAdapter(Context context, int layoutResourceId, List<DepartmentJson> data) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
         this.data = data;
+        this.requestQueue = Volley.newRequestQueue(context);
     }
 
     @Override
@@ -56,7 +60,7 @@ public class DepGridViewAdapter extends ArrayAdapter<Department> {
             holder = (ViewHolder) row.getTag();
         }
 
-        final Department item = data.get(position);
+        final DepartmentJson item = data.get(position);
         holder.imageTitle.setText(item.getName());
 
         new DownloadImageTask(holder.image).execute(item.getImageUrl());
@@ -65,46 +69,41 @@ public class DepGridViewAdapter extends ArrayAdapter<Department> {
     }
 
     public void refresh() {
-        final DepartmentApi departmentApi = new DepartmentApi.Builder(
-                AndroidHttp.newCompatibleTransport(),
-                new JacksonFactory(),
-                new HttpRequestInitializer() {
+
+        mProgressDialog = ProgressDialog.show(context, "טוען נתונים", "מעדכן מחלקות", true, true);
+
+        JsonArrayRequest req = new JsonArrayRequest(JsonURIs.getDepartmentsByCollegeIdUri(JsonURIs.SHENKAR_COLLEGE_ID),
+                new Response.Listener<JSONArray>() {
                     @Override
-                    public void initialize(HttpRequest request) throws IOException {
+                    public void onResponse(JSONArray response) {
+                        final List<DepartmentJson> departments = new ArrayList<>();
 
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+                                departments.add(new Gson().fromJson(response.getString(i), DepartmentJson.class));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        //show complition in UI
+                        //fill grid view with data
+                        mProgressDialog.dismiss();
+
+                        data.clear();
+                        data.addAll(departments);
+                        notifyDataSetChanged();
                     }
-                }).setRootUrl(Constants.ROOT_URL).build();
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        mProgressDialog.dismiss();
+                    }
+                });
 
-        new AsyncTask<Void, Void, List<Department>>() {
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                mProgressDialog = ProgressDialog.show(context, "טוען נתונים", "מעדכן מחלקות", true, true);
-            }
-
-            @Override
-            protected List<Department> doInBackground(Void... params) {
-                List<Department> departments = null;
-                try {
-                    departments = departmentApi.getDepartments().execute().getItems();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return departments;
-            }
-
-            @Override
-            protected void onPostExecute(List<Department> departments) {
-                //show complition in UI
-                //fill grid view with data
-                mProgressDialog.dismiss();
-                if (departments != null) {
-                    data.clear();
-                    data.addAll(departments);
-                    notifyDataSetChanged();
-                }
-            }
-        }.execute();
+        requestQueue.add(req);
     }
 
     static class ViewHolder {

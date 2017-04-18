@@ -10,12 +10,11 @@ import java.util.List;
 
 import il.ac.shenkar.endofyearshenkar.R;
 import il.ac.shenkar.endofyearshenkar.adapters.DepProjectsRecyclerAdapter;
-
-import il.ac.shenkar.showshenkar.backend.projectApi.model.Project;
+import il.ac.shenkar.endofyearshenkar.json.ProjectJson;
 
 public class SuggestedRouteActivity extends ShenkarActivity {
 
-    private List<Project> mProjects;
+    private List<ProjectJson> mProjects;
     private DepProjectsRecyclerAdapter adapter;
     private Long mRouteId;
     private String mRouteName;

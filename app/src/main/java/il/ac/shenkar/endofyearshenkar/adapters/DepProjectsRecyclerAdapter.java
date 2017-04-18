@@ -3,41 +3,41 @@ package il.ac.shenkar.endofyearshenkar.adapters;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.json.jackson2.JacksonFactory;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 
-import java.io.IOException;
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import il.ac.shenkar.endofyearshenkar.R;
 import il.ac.shenkar.endofyearshenkar.activities.ProjectActivity;
-import il.ac.shenkar.endofyearshenkar.utils.Constants;
-
-import il.ac.shenkar.showshenkar.backend.projectApi.ProjectApi;
-import il.ac.shenkar.showshenkar.backend.projectApi.model.Project;
-import il.ac.shenkar.showshenkar.backend.routeApi.RouteApi;
-import il.ac.shenkar.showshenkar.backend.routeApi.model.Route;
+import il.ac.shenkar.endofyearshenkar.json.JsonURIs;
+import il.ac.shenkar.endofyearshenkar.json.ProjectJson;
 
 public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjectsRecyclerAdapter.CustomViewHolder> {
-    private List<Project> depProjectList;
+    private final RequestQueue requestQueue;
+    private List<ProjectJson> depProjectList;
     private Context mContext;
     private ProgressDialog mProgressDialog;
 
-    public DepProjectsRecyclerAdapter(Context context, List<Project> depProjectList) {
+    public DepProjectsRecyclerAdapter(Context context, List<ProjectJson> depProjectList) {
         this.depProjectList = depProjectList;
         this.mContext = context;
+        this.requestQueue = Volley.newRequestQueue(context);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
 
     @Override
     public void onBindViewHolder(CustomViewHolder customViewHolder, int i) {
-        Project depProject = depProjectList.get(i);
+        ProjectJson depProject = depProjectList.get(i);
         if (depProject == null)
         {
             return;
@@ -72,123 +72,90 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
         return (null != depProjectList ? depProjectList.size() : 0);
     }
 
-    public class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        protected Long projectId;
-        protected TextView txtProjectName;
-        protected TextView txtProjectStudent;
+    /*
+        public void refresh(final Long routeId) {
+            final RouteApi routeApi = new RouteApi.Builder(
+                    AndroidHttp.newCompatibleTransport(),
+                    new JacksonFactory(),
+                    new HttpRequestInitializer() {
+                        @Override
+                        public void initialize(HttpRequest request) throws IOException {
 
-        public CustomViewHolder(View view) {
-            super(view);
-            this.txtProjectName = (TextView) view.findViewById(R.id.project_name);
-            this.txtProjectStudent = (TextView) view.findViewById(R.id.project_student);
-            txtProjectName.setOnClickListener(this);
-            txtProjectStudent.setOnClickListener(this);
-        }
+                        }
+                    }).setRootUrl(Constants.ROOT_URL).build();
 
-        @Override
-        public void onClick(View v) {
-            //Create intent
-            String studentNames = txtProjectStudent.getText().toString();
-            studentNames = studentNames.replace('\n', ' ');
-            Intent intent = new Intent(mContext, ProjectActivity.class);
-            intent.putExtra("project", txtProjectName.getText().toString());
-            intent.putExtra("students", studentNames);
-            intent.putExtra("id", projectId);
+            new AsyncTask<Void, Void, Route>() {
 
-            //Start details activity
-            mContext.startActivity(intent);
-        }
-    }
+                @Override
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                    mProgressDialog = ProgressDialog.show(mContext, "טוען נתונים", "מעדכן פרויקטים", true, true);
+                }
 
-    public void refresh(final Long routeId) {
-        final RouteApi routeApi = new RouteApi.Builder(
-                AndroidHttp.newCompatibleTransport(),
-                new JacksonFactory(),
-                new HttpRequestInitializer() {
-                    @Override
-                    public void initialize(HttpRequest request) throws IOException {
 
+                @Override
+                protected Route doInBackground(Void... params) {
+                    Route route = null;
+                    try {
+                        route = routeApi.getRoute(routeId).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                }).setRootUrl(Constants.ROOT_URL).build();
-
-        new AsyncTask<Void, Void, Route>() {
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                mProgressDialog = ProgressDialog.show(mContext, "טוען נתונים", "מעדכן פרויקטים", true, true);
-            }
-
-
-            @Override
-            protected Route doInBackground(Void... params) {
-                Route route = null;
-                try {
-                    route = routeApi.getRoute(routeId).execute();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    return route;
                 }
-                return route;
-            }
 
-            @Override
-            protected void onPostExecute(Route route) {
-                //show complition in UI
-                //fill grid view with data
-                mProgressDialog.dismiss();
-                if (route != null) {
-                    refresh(new HashSet<String>(route.getProjectIds()));
-                }
-            }
-        }.execute();
-    }
-
-    public void refresh(final String department) {
-        final ProjectApi projectApi = new ProjectApi.Builder(
-                AndroidHttp.newCompatibleTransport(),
-                new JacksonFactory(),
-                new HttpRequestInitializer() {
-                    @Override
-                    public void initialize(HttpRequest request) throws IOException {
-
+                @Override
+                protected void onPostExecute(Route route) {
+                    //show complition in UI
+                    //fill grid view with data
+                    mProgressDialog.dismiss();
+                    if (route != null) {
+                        refresh(new HashSet<String>(route.getProjectIds()));
                     }
-                }).setRootUrl(Constants.ROOT_URL).build();
-
-        new AsyncTask<Void, Void, List<Project>>() {
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                mProgressDialog = ProgressDialog.show(mContext, "טוען נתונים", "מעדכן פרויקטים", true, true);
-            }
-
-
-            @Override
-            protected List<Project> doInBackground(Void... params) {
-                List<Project> projects = null;
-                try {
-                    projects = projectApi.getProjectsByDepartment(department).execute().getItems();
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
-                return projects;
-            }
+            }.execute();
+        }
+    */
+    public void refresh(final long departmentId) {
 
-            @Override
-            protected void onPostExecute(List<Project> projects) {
-                //show complition in UI
-                //fill grid view with data
-                mProgressDialog.dismiss();
-                if (projects != null) {
-                    depProjectList.clear();
-                    depProjectList.addAll(projects);
-                    notifyDataSetChanged();
-                }
-            }
-        }.execute();
+        mProgressDialog = ProgressDialog.show(mContext, "טוען נתונים", "מעדכן פרויקטים", true, true);
+
+        JsonArrayRequest req = new JsonArrayRequest(JsonURIs.getProjectsByDepartmentIdUri(JsonURIs.SHENKAR_COLLEGE_ID, departmentId),
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        final List<ProjectJson> projects = new ArrayList<>();
+
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+                                projects.add(new Gson().fromJson(response.getString(i), ProjectJson.class));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        //show complition in UI
+                        //fill grid view with data
+                        mProgressDialog.dismiss();
+
+                        depProjectList.clear();
+                        depProjectList.addAll(projects);
+                        notifyDataSetChanged();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        mProgressDialog.dismiss();
+                    }
+                });
+
+        requestQueue.add(req);
     }
 
     public void refresh(final Set<String> projectIds) {
+        /*
         final ProjectApi projectApi = new ProjectApi.Builder(
                 AndroidHttp.newCompatibleTransport(),
                 new JacksonFactory(),
@@ -224,10 +191,39 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
                 }
             }
         }.execute();
+        */
     }
 
     public void clear()
     {
         depProjectList.clear();
+    }
+
+    public class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        protected Long projectId;
+        protected TextView txtProjectName;
+        protected TextView txtProjectStudent;
+
+        public CustomViewHolder(View view) {
+            super(view);
+            this.txtProjectName = (TextView) view.findViewById(R.id.project_name);
+            this.txtProjectStudent = (TextView) view.findViewById(R.id.project_student);
+            txtProjectName.setOnClickListener(this);
+            txtProjectStudent.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            //Create intent
+            String studentNames = txtProjectStudent.getText().toString();
+            studentNames = studentNames.replace('\n', ' ');
+            Intent intent = new Intent(mContext, ProjectActivity.class);
+            intent.putExtra("project", txtProjectName.getText().toString());
+            intent.putExtra("students", studentNames);
+            intent.putExtra("id", projectId);
+
+            //Start details activity
+            mContext.startActivity(intent);
+        }
     }
 }

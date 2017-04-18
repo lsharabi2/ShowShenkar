@@ -15,11 +15,10 @@ import java.util.Set;
 
 import il.ac.shenkar.endofyearshenkar.R;
 import il.ac.shenkar.endofyearshenkar.adapters.DepProjectsRecyclerAdapter;
-
-import il.ac.shenkar.showshenkar.backend.projectApi.model.Project;
+import il.ac.shenkar.endofyearshenkar.json.ProjectJson;
 
 public class MyRouteActivity extends ShenkarActivity {
-    private List<Project> mProjects;
+    private List<ProjectJson> mProjects;
 
     private DepProjectsRecyclerAdapter adapter;
     private RecyclerView rvProjects;

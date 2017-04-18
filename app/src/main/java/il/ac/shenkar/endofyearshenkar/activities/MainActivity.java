@@ -14,14 +14,13 @@ import java.util.List;
 
 import il.ac.shenkar.endofyearshenkar.R;
 import il.ac.shenkar.endofyearshenkar.adapters.DepGridViewAdapter;
-
-import il.ac.shenkar.showshenkar.backend.departmentApi.model.Department;
+import il.ac.shenkar.endofyearshenkar.json.DepartmentJson;
 
 public class MainActivity extends ShenkarActivity {
 
     private GridView gridView;
     private DepGridViewAdapter gridAdapter;
-    private List<Department> mDepartments;
+    private List<DepartmentJson> mDepartments;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +36,7 @@ public class MainActivity extends ShenkarActivity {
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                Department item = (Department) parent.getItemAtPosition(position);
+                DepartmentJson item = (DepartmentJson) parent.getItemAtPosition(position);
 
                 //Create intent
                 Intent intent = new Intent(MainActivity.this, DepartmentActivity.class);

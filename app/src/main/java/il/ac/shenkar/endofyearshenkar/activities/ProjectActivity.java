@@ -271,7 +271,7 @@ public class ProjectActivity extends ShenkarActivity {
         List<String> names = mProject.getStudentNames();
         String namesStr = "";
         for (String name : names) {
-            namesStr += name + "\n";
+            namesStr += name + " ";
         }
 
         views.txtStudentName.setText(namesStr);
@@ -315,7 +315,7 @@ public class ProjectActivity extends ShenkarActivity {
                 public void onClick(View v) {
                     final Dialog dialogT = new Dialog(context);
                     dialogT.setContentView(R.layout.custom);
-                    ImageButton dialogButtonPlay = (ImageButton) dialogT.findViewById(R.id.imageButtonPlay);
+                    ImageView dialogButtonPlay = (ImageView) dialogT.findViewById(R.id.imageButtonPlay);
                     // if button is clicked, close the custom dialog
                     dialogButtonPlay.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -344,7 +344,7 @@ public class ProjectActivity extends ShenkarActivity {
                             mediaPlayer.start();
                         }
                     });
-                    ImageButton dialogButtonStop = (ImageButton) dialogT.findViewById(R.id.imageButtonStop);
+                    ImageView dialogButtonStop = (ImageView) dialogT.findViewById(R.id.imageButtonStop);
                     // if button is clicked, close the custom dialog
                     dialogButtonStop.setOnClickListener(new View.OnClickListener() {
                         @Override

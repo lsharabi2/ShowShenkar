@@ -8,12 +8,11 @@ import java.util.ArrayList;
 
 import il.ac.shenkar.endofyearshenkar.R;
 import il.ac.shenkar.endofyearshenkar.adapters.RoutesRecyclerAdapter;
-
-import il.ac.shenkar.showshenkar.backend.routeApi.model.Route;
+import il.ac.shenkar.endofyearshenkar.json.RouteJson;
 
 public class RoutesActivity extends ShenkarActivity {
 
-    private ArrayList<Route> mRoutes;
+    private ArrayList<RouteJson> mRoutes;
     private RoutesRecyclerAdapter adapter;
 
     @Override

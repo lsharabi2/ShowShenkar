@@ -6,6 +6,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 
@@ -14,13 +18,19 @@ import java.util.List;
 
 import il.ac.shenkar.endofyearshenkar.R;
 import il.ac.shenkar.endofyearshenkar.adapters.DepGridViewAdapter;
+import il.ac.shenkar.endofyearshenkar.json.CollegeConfigJson;
 import il.ac.shenkar.endofyearshenkar.json.DepartmentJson;
+import il.ac.shenkar.endofyearshenkar.json.GsonRequest;
+import il.ac.shenkar.endofyearshenkar.json.JsonURIs;
 
 public class MainActivity extends ShenkarActivity {
 
+    private static String TAG = "MAIN_ACTIVITY";
     private GridView gridView;
     private DepGridViewAdapter gridAdapter;
     private List<DepartmentJson> mDepartments;
+    private RequestQueue mRequestQueue;
+    private CollegeConfigJson mMainConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +60,31 @@ public class MainActivity extends ShenkarActivity {
             }
         });
 
+        refreshCollegeConfigInfo();
+    }
+
+    private void refreshCollegeConfigInfo() {
+        // Instantiate the RequestQueue.
+        mRequestQueue = Volley.newRequestQueue(this);
+        String url = JsonURIs.getConfigCollegeIdUri(JsonURIs.SHENKAR_COLLEGE_ID);
+
+        GsonRequest request = new GsonRequest(url, CollegeConfigJson.class, null,
+                new Response.Listener<CollegeConfigJson>() {
+                    @Override
+                    public void onResponse(CollegeConfigJson response) {
+                        mMainConfig = response;
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+
+        request.setTag(TAG);
+        // Add the request to the RequestQueue.
+        mRequestQueue.add(request);
+
     }
 
     private String getStringResourceByName(String aString) {
@@ -76,6 +111,16 @@ public class MainActivity extends ShenkarActivity {
 
     public void openGeneralActivity(View v) {
         Intent intent = new Intent(this, GeneralActivity.class);
+        intent.putExtra("main_config", mMainConfig);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (mRequestQueue != null) {
+            mRequestQueue.cancelAll(TAG);
+        }
     }
 }

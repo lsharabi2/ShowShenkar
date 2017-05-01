@@ -14,9 +14,18 @@ public class JsonURIs {
     public static final String PROJECT_BY_ID_URI = "http://shenkar-show.herokuapp.com/guest/project/id/%d";
     public static final String LOCATION_BY_ID_URI = "http://shenkar-show.herokuapp.com/guest/location/id/%d";
     public static final String ROUTE_BY_ID_URI = "http://shenkar-show.herokuapp.com/guest/route/id/%d";
+    public static final String ROUTES_BY_COLLEGE_ID_URI = "http://shenkar-show.herokuapp.com/guest/institute/id/%d/routes";
+
+    public static String getConfigCollegeIdUri(long collegeId) {
+        return String.format(COLLEGE_CONFIG_BY_ID_URI, collegeId);
+    }
 
     public static String getDepartmentsByCollegeIdUri(long collegeId) {
         return String.format(DEPARTMENTS_BY_COLLEGE_ID_URI, collegeId);
+    }
+
+    public static String getRoutessByCollegeIdUri(long collegeId) {
+        return String.format(ROUTES_BY_COLLEGE_ID_URI, collegeId);
     }
 
     public static String getProjectsByDepartmentIdUri(long collegeId, long departmentId) {

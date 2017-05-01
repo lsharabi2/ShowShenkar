@@ -49,12 +49,18 @@ public class ProjectGalleryRecyclerAdapter extends RecyclerView.Adapter<ProjectG
     }
 
     public void refresh(final List<String> images) {
-        boolean isNew = mImages.isEmpty();
-        mImages.clear();
+        boolean isNew = false;
 
-        if (isNew && !mImages.isEmpty()) {
-            new DownloadImageTask(mMainImage).execute(mImages.get(0));
-            currentMainImageUrl = mImages.get(0);
+        for (String imageUrl : images) {
+            if (!mImages.contains(imageUrl)) {
+                isNew = true;
+            }
+        }
+
+        if (isNew && !images.isEmpty()) {
+            new DownloadImageTask(mMainImage).execute(images.get(0));
+            currentMainImageUrl = images.get(0);
+            mImages = images;
         }
 
         notifyDataSetChanged();

@@ -11,6 +11,7 @@ import java.util.List;
 import il.ac.shenkar.endofyearshenkar.R;
 import il.ac.shenkar.endofyearshenkar.adapters.DepProjectsRecyclerAdapter;
 import il.ac.shenkar.endofyearshenkar.json.ProjectJson;
+import il.ac.shenkar.endofyearshenkar.json.RouteJson;
 
 public class SuggestedRouteActivity extends ShenkarActivity {
 
@@ -18,6 +19,7 @@ public class SuggestedRouteActivity extends ShenkarActivity {
     private DepProjectsRecyclerAdapter adapter;
     private Long mRouteId;
     private String mRouteName;
+    private RouteJson mRoute;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +28,7 @@ public class SuggestedRouteActivity extends ShenkarActivity {
 
         mRouteId = getIntent().getLongExtra("id", 0);
         mRouteName = getIntent().getStringExtra("title");
+        mRoute = (RouteJson) getIntent().getSerializableExtra("route");
 
         TextView titleTextView = (TextView) findViewById(R.id.title);
         titleTextView.setText(mRouteName);
@@ -43,6 +46,6 @@ public class SuggestedRouteActivity extends ShenkarActivity {
     @Override
     public void onResume() {
         super.onResume();
-        adapter.refresh(mRouteId);
+        adapter.refresh(mRoute.getProjectIds());
     }
 }

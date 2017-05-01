@@ -65,7 +65,12 @@ public class MyRouteActivity extends ShenkarActivity {
             emptyView.setVisibility(View.VISIBLE);
         }
         else {
-            adapter.refresh(projectIds);
+            List<Long> projectIdsLong = new ArrayList<Long>();
+            for (String idString : projectIds) {
+                projectIdsLong.add(Long.parseLong(idString));
+            }
+
+            adapter.refresh(projectIdsLong);
             rvProjects.setVisibility(View.VISIBLE);
             emptyView.setVisibility(View.GONE);
         }

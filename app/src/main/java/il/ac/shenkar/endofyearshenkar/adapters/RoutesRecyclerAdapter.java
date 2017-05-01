@@ -5,32 +5,39 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.json.jackson2.JacksonFactory;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.RequestFuture;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 
-import java.io.IOException;
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import il.ac.shenkar.endofyearshenkar.R;
 import il.ac.shenkar.endofyearshenkar.activities.SuggestedRouteActivity;
-
-import il.ac.shenkar.showshenkar.backend.routeApi.RouteApi;
-import il.ac.shenkar.showshenkar.backend.routeApi.model.Route;
-import il.ac.shenkar.endofyearshenkar.utils.Constants;
+import il.ac.shenkar.endofyearshenkar.json.JsonURIs;
+import il.ac.shenkar.endofyearshenkar.json.RouteJson;
 
 public class RoutesRecyclerAdapter extends RecyclerView.Adapter<RoutesRecyclerAdapter.CustomViewHolder> {
-    private List<Route> mRoutes;
+    private static final String TAG = "RoutesRecyclerAdapter";
+    private List<RouteJson> mRoutes;
     private Context mContext;
     private ProgressDialog mProgressDialog;
 
-    public RoutesRecyclerAdapter(Context context, List<Route> routes) {
+    public RoutesRecyclerAdapter(Context context, List<RouteJson> routes) {
         this.mRoutes = routes;
         this.mContext = context;
     }
@@ -44,9 +51,9 @@ public class RoutesRecyclerAdapter extends RecyclerView.Adapter<RoutesRecyclerAd
 
     @Override
     public void onBindViewHolder(CustomViewHolder customViewHolder, int i) {
-        Route route = mRoutes.get(i);
+        RouteJson route = mRoutes.get(i);
 
-        customViewHolder.routeId = route.getId();
+        customViewHolder.route = route;
         customViewHolder.txtRouteName.setText(route.getName());
     }
 
@@ -55,9 +62,72 @@ public class RoutesRecyclerAdapter extends RecyclerView.Adapter<RoutesRecyclerAd
         return (null != mRoutes ? mRoutes.size() : 0);
     }
 
+    public void refresh() {
+        final String url = JsonURIs.getRoutessByCollegeIdUri(JsonURIs.SHENKAR_COLLEGE_ID);
+
+        new AsyncTask<Void, Void, List<RouteJson>>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                mProgressDialog = ProgressDialog.show(mContext, "טוען נתונים", "מעדכן מסלולים", true, true);
+            }
+
+            @Override
+            protected List<RouteJson> doInBackground(Void... params) {
+                try {
+
+                    // Instantiate the RequestQueue.
+                    RequestQueue requestQueue = Volley.newRequestQueue(RoutesRecyclerAdapter.this.mContext);
+
+                    RequestFuture<JSONArray> future = RequestFuture.newFuture();
+
+                    JsonArrayRequest req = new JsonArrayRequest(url, future, future);
+
+                    // Add the request to the RequestQueue.
+                    requestQueue.add(req);
+
+                    JSONArray response = future.get(3, TimeUnit.SECONDS);
+
+                    List<RouteJson> routes = new ArrayList<RouteJson>();
+
+                    for (int i = 0; i < response.length(); i++) {
+                        try {
+                            routes.add(new Gson().fromJson(response.getString(i), RouteJson.class));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    return routes;
+                } catch (InterruptedException e) {
+                    Log.d(TAG, "interrupted error");
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    Log.d(TAG, "execution error");
+                    e.printStackTrace();
+                } catch (TimeoutException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(List<RouteJson> routes) {
+                //show complition in UI
+                //fill grid view with data
+                mProgressDialog.dismiss();
+                if (routes != null) {
+                    mRoutes.clear();
+                    mRoutes.addAll(routes);
+                    notifyDataSetChanged();
+                }
+            }
+        }.execute();
+    }
+
     public class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         protected TextView txtRouteName;
-        protected Long routeId;
+        RouteJson route;
 
         public CustomViewHolder(View view) {
             super(view);
@@ -69,54 +139,12 @@ public class RoutesRecyclerAdapter extends RecyclerView.Adapter<RoutesRecyclerAd
         public void onClick(View v) {
             //Create intent
             Intent intent = new Intent(mContext, SuggestedRouteActivity.class);
-            intent.putExtra("id", routeId);
+            intent.putExtra("id", route.getId());
             intent.putExtra("title", txtRouteName.getText().toString());
+            intent.putExtra("route", route);
 
             //Start details activity
             mContext.startActivity(intent);
         }
-    }
-
-    public void refresh() {
-        final RouteApi routeApi = new RouteApi.Builder(
-                AndroidHttp.newCompatibleTransport(),
-                new JacksonFactory(),
-                new HttpRequestInitializer() {
-                    @Override
-                    public void initialize(HttpRequest request) throws IOException {
-
-                    }
-                }).setRootUrl(Constants.ROOT_URL).build();
-
-        new AsyncTask<Void, Void, List<Route>>() {
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                mProgressDialog = ProgressDialog.show(mContext, "טוען נתונים", "מעדכן מסלולים", true, true);
-            }
-
-            @Override
-            protected List<Route> doInBackground(Void... params) {
-                List<Route> routes = null;
-                try {
-                    routes = routeApi.getRoutes().execute().getItems();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return routes;
-            }
-
-            @Override
-            protected void onPostExecute(List<Route> routes) {
-                //show complition in UI
-                //fill grid view with data
-                mProgressDialog.dismiss();
-                if (routes != null) {
-                    mRoutes.clear();
-                    mRoutes.addAll(routes);
-                    notifyDataSetChanged();
-                }
-            }
-        }.execute();
     }
 }

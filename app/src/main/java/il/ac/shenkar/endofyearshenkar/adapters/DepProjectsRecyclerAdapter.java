@@ -3,7 +3,9 @@ package il.ac.shenkar.endofyearshenkar.adapters;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
@@ -20,15 +23,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import il.ac.shenkar.endofyearshenkar.R;
 import il.ac.shenkar.endofyearshenkar.activities.ProjectActivity;
+import il.ac.shenkar.endofyearshenkar.json.GsonRequest;
 import il.ac.shenkar.endofyearshenkar.json.JsonURIs;
 import il.ac.shenkar.endofyearshenkar.json.ProjectJson;
 
 public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjectsRecyclerAdapter.CustomViewHolder> {
+    private static String TAG = "DepProjectsRecyclerAdapter";
     private final RequestQueue requestQueue;
     private List<ProjectJson> depProjectList;
     private Context mContext;
@@ -154,34 +162,51 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
         requestQueue.add(req);
     }
 
-    public void refresh(final Set<String> projectIds) {
-        /*
-        final ProjectApi projectApi = new ProjectApi.Builder(
-                AndroidHttp.newCompatibleTransport(),
-                new JacksonFactory(),
-                new HttpRequestInitializer() {
-                    @Override
-                    public void initialize(HttpRequest request) throws IOException {
+    public ProjectJson getProjectById(long projectId) {
+        try {
+            final String url = JsonURIs.getProjectByIdUri(projectId);
 
-                    }
-                }).setRootUrl(Constants.ROOT_URL).build();
+            RequestFuture<ProjectJson> future = RequestFuture.newFuture();
 
-        new AsyncTask<Void, Void, List<Project>>() {
+            GsonRequest req = new GsonRequest(url, ProjectJson.class, null, future, future);
+
+            // Add the request to the RequestQueue.
+            requestQueue.add(req);
+
+            ProjectJson response = future.get(3, TimeUnit.SECONDS);
+
+            return response;
+        } catch (InterruptedException e) {
+            Log.d(TAG, "interrupted error");
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            Log.d(TAG, "execution error");
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void refresh(final Collection<Long> projectIds) {
+
+        new AsyncTask<Void, Void, List<ProjectJson>>() {
             @Override
-            protected List<Project> doInBackground(Void... params) {
-                List<Project> projects = new ArrayList<Project>();
-                try {
-                    for (String projectId : projectIds) {
-                        projects.add(projectApi.getProject(Long.parseLong(projectId)).execute());
+            protected List<ProjectJson> doInBackground(Void... params) {
+                List<ProjectJson> projects = new ArrayList<ProjectJson>();
+
+                for (long projectId : projectIds) {
+                    ProjectJson project = getProjectById(projectId);
+
+                    if (project != null) {
+                        projects.add(project);
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                    }
                 return projects;
             }
 
             @Override
-            protected void onPostExecute(List<Project> projects) {
+            protected void onPostExecute(List<ProjectJson> projects) {
                 //show complition in UI
                 //fill grid view with data
                 if (projects != null) {
@@ -191,7 +216,7 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
                 }
             }
         }.execute();
-        */
+
     }
 
     public void clear()

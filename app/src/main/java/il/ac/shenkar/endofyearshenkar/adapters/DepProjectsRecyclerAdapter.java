@@ -58,8 +58,7 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
     @Override
     public void onBindViewHolder(CustomViewHolder customViewHolder, int i) {
         ProjectJson depProject = depProjectList.get(i);
-        if (depProject == null)
-        {
+        if (depProject == null) {
             return;
         }
 
@@ -170,10 +169,12 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
 
             GsonRequest req = new GsonRequest(url, ProjectJson.class, null, future, future);
 
-            // Add the request to the RequestQueue.
-            requestQueue.add(req);
+            RequestQueue tempQueue = Volley.newRequestQueue(mContext);
 
-            ProjectJson response = future.get(3, TimeUnit.SECONDS);
+            // Add the request to the RequestQueue.
+            tempQueue.add(req);
+
+            ProjectJson response = future.get(10, TimeUnit.SECONDS);
 
             return response;
         } catch (InterruptedException e) {
@@ -201,7 +202,7 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
                     if (project != null) {
                         projects.add(project);
                     }
-                    }
+                }
                 return projects;
             }
 
@@ -219,8 +220,7 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
 
     }
 
-    public void clear()
-    {
+    public void clear() {
         depProjectList.clear();
     }
 

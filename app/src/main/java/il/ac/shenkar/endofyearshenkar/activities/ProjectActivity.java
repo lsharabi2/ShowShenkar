@@ -415,7 +415,7 @@ public class ProjectActivity extends ShenkarActivity {
     public void shareProject(View v) {
 
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-        Uri screenshotUri = Uri.parse("android.resource://il.ac.shenkar.showshenkar.activities/*");
+        Uri screenshotUri = Uri.parse("android.resource://il.ac.shenkar.showshenkar.endofyearshenkar.activities/*");
         try {
             InputStream stream = getContentResolver().openInputStream(screenshotUri);
         } catch (FileNotFoundException e) {

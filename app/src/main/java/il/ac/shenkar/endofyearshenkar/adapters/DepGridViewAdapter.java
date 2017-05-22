@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import il.ac.shenkar.endofyearshenkar.R;
+import il.ac.shenkar.endofyearshenkar.db.DepartmentDbHelper;
 import il.ac.shenkar.endofyearshenkar.json.DepartmentJson;
 import il.ac.shenkar.endofyearshenkar.json.JsonURIs;
 import il.ac.shenkar.endofyearshenkar.utils.DownloadImageTask;
@@ -31,6 +32,7 @@ import il.ac.shenkar.endofyearshenkar.utils.DownloadImageTask;
 public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
 
     private final RequestQueue requestQueue;
+    private final DepartmentDbHelper mDbHelper;
     private Context context;
     private int layoutResourceId;
     private List<DepartmentJson> data;
@@ -42,6 +44,8 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
         this.context = context;
         this.data = data;
         this.requestQueue = Volley.newRequestQueue(context);
+        mDbHelper = new DepartmentDbHelper(context);
+        addAll(mDbHelper.getAll());
     }
 
     @Override
@@ -86,13 +90,16 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
                             }
                         }
 
-                        //show complition in UI
+                        //show completion in UI
                         //fill grid view with data
-                        mProgressDialog.dismiss();
+                        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                            mProgressDialog.dismiss();
+                        }
 
                         data.clear();
                         data.addAll(departments);
                         notifyDataSetChanged();
+                        replaceDepartmentsDb(departments);
                     }
                 },
                 new Response.ErrorListener() {
@@ -104,6 +111,14 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
                 });
 
         requestQueue.add(req);
+    }
+
+    private void replaceDepartmentsDb(List<DepartmentJson> departmentJsons) {
+        mDbHelper.clearAll();
+
+        for (DepartmentJson json : departmentJsons) {
+            mDbHelper.insertDepartment(json);
+        }
     }
 
     static class ViewHolder {

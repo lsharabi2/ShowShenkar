@@ -33,4 +33,5 @@
     <string name="shenkar_title">שנקר</string>
     <string name="route_name_place_holder">שם המסלול</string>
     <string name="empty_my_route">במסך זה תראו פרוייקטים שעברתם עליהם עם האפליקציה</string>
+    <string name="no_network_connection_toast">אין חיבור רשת</string>
 </resources>

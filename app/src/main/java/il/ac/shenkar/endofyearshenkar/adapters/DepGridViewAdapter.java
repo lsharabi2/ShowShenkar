@@ -1,13 +1,15 @@
 package il.ac.shenkar.endofyearshenkar.adapters;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
@@ -24,28 +26,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 import il.ac.shenkar.endofyearshenkar.R;
+import il.ac.shenkar.endofyearshenkar.activities.MainActivity;
 import il.ac.shenkar.endofyearshenkar.db.DepartmentDbHelper;
 import il.ac.shenkar.endofyearshenkar.json.DepartmentJson;
 import il.ac.shenkar.endofyearshenkar.json.JsonURIs;
-import il.ac.shenkar.endofyearshenkar.utils.DownloadImageTask;
 
 public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
 
     private final RequestQueue requestQueue;
     private final DepartmentDbHelper mDbHelper;
-    private Context context;
+    private MainActivity activity;
     private int layoutResourceId;
     private List<DepartmentJson> data;
     private ProgressDialog mProgressDialog;
 
-    public DepGridViewAdapter(Context context, int layoutResourceId, List<DepartmentJson> data) {
-        super(context, layoutResourceId, data);
+    public DepGridViewAdapter(MainActivity activity, int layoutResourceId, List<DepartmentJson> data) {
+        super(activity, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
-        this.context = context;
+        this.activity = activity;
         this.data = data;
-        this.requestQueue = Volley.newRequestQueue(context);
-        mDbHelper = new DepartmentDbHelper(context);
+        this.requestQueue = Volley.newRequestQueue(activity);
+        mDbHelper = new DepartmentDbHelper(activity);
         addAll(mDbHelper.getAll());
+    }
+
+    public static StateListDrawable makeSelector(int color) {
+        StateListDrawable res = new StateListDrawable();
+        res.setExitFadeDuration(400);
+        res.setAlpha(45);
+        res.addState(new int[]{android.R.attr.state_pressed}, new ColorDrawable(color));
+        res.addState(new int[]{android.R.attr.state_selected}, new ColorDrawable(color));
+        res.addState(new int[]{}, new ColorDrawable(Color.TRANSPARENT));
+        return res;
     }
 
     @Override
@@ -54,11 +66,12 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
         final ViewHolder holder;
 
         if (row == null) {
-            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+            LayoutInflater inflater = (activity).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
             holder = new ViewHolder();
             holder.imageTitle = (TextView) row.findViewById(R.id.text);
             holder.image = (ImageView) row.findViewById(R.id.image);
+            holder.layout = (LinearLayout) row.findViewById(R.id.item_layout);
             row.setTag(holder);
         } else {
             holder = (ViewHolder) row.getTag();
@@ -67,14 +80,22 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
         final DepartmentJson item = data.get(position);
         holder.imageTitle.setText(item.getName());
 
-        new DownloadImageTask(holder.image).execute(item.getImageUrl());
+        if (MainActivity.mMainConfig != null) {
+            holder.imageTitle.setTextColor(Color.parseColor(MainActivity.mMainConfig.getMainTextColor()));
+            holder.imageTitle.setBackgroundColor(Color.parseColor(MainActivity.mMainConfig.getSecondaryColor()));
+            holder.image.setBackgroundColor(Color.parseColor(MainActivity.mMainConfig.getSecondaryColor()));
+            holder.layout.setBackgroundDrawable(makeSelector(Color.parseColor(MainActivity.mMainConfig.getPrimaryColor())));
+        }
+
+        activity.getImageFetcher().loadImage(item.getImageUrl(), holder.image);
+        //new DownloadImageTask(holder.image).execute(item.getImageUrl());
 
         return row;
     }
 
     public void refresh() {
 
-        mProgressDialog = ProgressDialog.show(context, "טוען נתונים", "מעדכן מחלקות", true, true);
+        mProgressDialog = ProgressDialog.show(activity, "טוען נתונים", "מעדכן מחלקות", true, true);
 
         JsonArrayRequest req = new JsonArrayRequest(JsonURIs.getDepartmentsByCollegeIdUri(JsonURIs.SHENKAR_COLLEGE_ID),
                 new Response.Listener<JSONArray>() {
@@ -124,5 +145,6 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
     static class ViewHolder {
         TextView imageTitle;
         ImageView image;
+        LinearLayout layout;
     }
 }

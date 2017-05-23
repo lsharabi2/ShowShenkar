@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -8,11 +9,11 @@
     tools:context="il.ac.shenkar.endofyearshenkar.activities.MainActivity">
 
     <il.ac.shenkar.endofyearshenkar.utils.BoldAlefTextView
+        android:id="@+id/logo_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/shenkarYellow"
         android:gravity="center"
-        android:text="@string/shenkar_title"
         android:textColor="@color/black"
         android:textSize="50dp"
         android:textStyle="bold" />

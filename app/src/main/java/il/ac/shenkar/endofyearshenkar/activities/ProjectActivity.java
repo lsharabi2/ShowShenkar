@@ -38,11 +38,6 @@ import il.ac.shenkar.endofyearshenkar.adapters.ProjectGalleryRecyclerAdapter;
 import il.ac.shenkar.endofyearshenkar.json.GsonRequest;
 import il.ac.shenkar.endofyearshenkar.json.JsonURIs;
 import il.ac.shenkar.endofyearshenkar.json.ProjectJson;
-import il.ac.shenkar.endofyearshenkar.model.DBHelper;
-import il.ac.shenkar.showshenkar.backend.contentApi.ContentApi;
-import il.ac.shenkar.showshenkar.backend.contentApi.model.Content;
-import il.ac.shenkar.showshenkar.backend.contentApi.model.Media;
-import il.ac.shenkar.showshenkar.backend.projectApi.ProjectApi;
 
 public class ProjectActivity extends ShenkarActivity {
 
@@ -51,14 +46,6 @@ public class ProjectActivity extends ShenkarActivity {
     final Context context = this;
     private ProjectGalleryRecyclerAdapter adapter;
     private List<String> mProjectImages;
-    private DBHelper dbhelper;
-    private ContentApi contentApi;
-    private Content content;
-    private ProjectApi projectApi;
-    private List<Media> listM;
-    private String urlVideo;
-    private String urlAudio;
-    private String idContent;
     private RequestQueue mRequestQueue;
     private ImageButton playVd;
     private ImageButton playSD;

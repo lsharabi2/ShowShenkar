@@ -13,16 +13,11 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import il.ac.shenkar.endofyearshenkar.R;
-import il.ac.shenkar.endofyearshenkar.model.DBHelper;
-import il.ac.shenkar.showshenkar.backend.projectApi.ProjectApi;
-import il.ac.shenkar.showshenkar.backend.projectApi.model.Project;
 
 public class ShenkarActivity extends AppCompatActivity {
 
     public String Qrlocation;
     Long rContent;
-    ProjectApi projectApi;
-    Project project;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +80,7 @@ public class ShenkarActivity extends AppCompatActivity {
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
 //                String locationId;
-                DBHelper helper = new DBHelper();
+                //DBHelper helper = new DBHelper();
                 try {
                     String oType = result.getContents().split(";")[0];
                     Long oID = Long.valueOf(result.getContents().split(";")[1]);

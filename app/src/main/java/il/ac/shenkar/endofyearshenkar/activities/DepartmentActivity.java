@@ -17,13 +17,11 @@ import il.ac.shenkar.endofyearshenkar.R;
 import il.ac.shenkar.endofyearshenkar.adapters.DepProjectsRecyclerAdapter;
 import il.ac.shenkar.endofyearshenkar.json.ProjectJson;
 import il.ac.shenkar.endofyearshenkar.utils.DownloadImageTask;
-import il.ac.shenkar.showshenkar.backend.departmentApi.model.Department;
 
 
 public class DepartmentActivity extends ShenkarActivity {
     private static String TAG = "DepartmentActivity";
     private List<ProjectJson> mProjects;
-    private Department mDepartment;
     private Long mDepartmentId;
     private String mDepartmentName;
     private DepProjectsRecyclerAdapter adapter;

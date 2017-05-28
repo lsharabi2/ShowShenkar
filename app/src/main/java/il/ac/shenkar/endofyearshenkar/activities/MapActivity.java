@@ -21,10 +21,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.TileProvider;
 import com.google.android.gms.maps.model.UrlTileProvider;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.json.jackson2.JacksonFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -35,44 +31,26 @@ import il.ac.shenkar.endofyearshenkar.R;
 import il.ac.shenkar.endofyearshenkar.utils.PermissionUtils;
 import il.ac.shenkar.endofyearshenkar.adapters.PopupAdapter;
 
-import il.ac.shenkar.showshenkar.backend.contentApi.ContentApi;
-import il.ac.shenkar.showshenkar.backend.contentApi.model.Content;
-import il.ac.shenkar.showshenkar.backend.departmentApi.DepartmentApi;
-import il.ac.shenkar.showshenkar.backend.departmentApi.model.Department;
-import il.ac.shenkar.showshenkar.backend.projectApi.ProjectApi;
-import il.ac.shenkar.showshenkar.backend.projectApi.model.Project;
 import il.ac.shenkar.endofyearshenkar.utils.Constants;
 
 public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private GoogleApiClient mGoogleApiClient;
-
-    private Location mLastLocation;
-
-    private GoogleMap mMap;
-
     private static final LatLng PERNIK = new LatLng(32.0900466 , 34.8035959);
-
     private static final LatLng MITSHLE = new LatLng(32.089928, 34.802239);
-
     private static final LatLng INTERIOR_DESIGN = new LatLng(32.09030615669672, 34.803183311601877);
-
     private static final LatLng SHENKAR = new LatLng(32.090023, 34.803151);
-
     private static final LatLng ELIT = new LatLng(32.08264557800064, 34.80440218001604);
-
-    private Long objectId;
-
-    private String objectType;
-
-
     /**
      * Request code for location permission request.
      *
      * @see #onRequestPermissionsResult(int, String[], int[])
      */
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-
+    private GoogleApiClient mGoogleApiClient;
+    private Location mLastLocation;
+    private GoogleMap mMap;
+    private Long objectId;
+    private String objectType;
     /**
      * Flag indicating whether a requested permission has been denied after returning in
      * {@link #onRequestPermissionsResult(int, String[], int[])}.
@@ -106,14 +84,14 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         enableMyLocation();
-        if (objectType.equals("project")){
-            SetProjectMap(objectId);
-        }else if (objectType.equals("department")){
-            SetDepartmentMap(objectId);
-        }
-        else if (objectType.equals("general")){
-            SetGeneralMap();
-        }
+//        if (objectType.equals("project")){
+//            SetProjectMap(objectId);
+//        }else if (objectType.equals("department")){
+//            SetDepartmentMap(objectId);
+//        }
+//        else if (objectType.equals("general")){
+//            SetGeneralMap();
+//        }
     }
     /*
      *   Set General Map
@@ -122,116 +100,116 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
         SetMapByDepartmentName("שנקר");
         mMap.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater(),""));
     }
-
-    /*
-     *   Set Department Map
-     * */
-    public void SetDepartmentMap(final Long departmentId){
-        final DepartmentApi departmentApi = new DepartmentApi.Builder(
-                AndroidHttp.newCompatibleTransport(),
-                new JacksonFactory(),
-                new HttpRequestInitializer() {
-                    @Override
-                    public void initialize(HttpRequest request) throws IOException {
-
-                    }
-                }).setRootUrl(Constants.ROOT_URL).build();
-
-        new AsyncTask<Void, Void, Department>() {
-            @Override
-            protected Department doInBackground(Void... params) {
-                try {
-                    return departmentApi.getDepartment(departmentId).execute();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Department department) {
-                if (department != null) {
-                    SetMapByDepartmentName(department.getName());
-                    mMap.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater(),department.getImageUrl()));
-                }
-            }
-        }.execute();
-    }
-
-    /*
-     *   Set Project Map
-     * */
-    public void SetProjectMap(final Long projectId) {
-        final ProjectApi projectApi = new ProjectApi.Builder(
-                AndroidHttp.newCompatibleTransport(),
-                new JacksonFactory(),
-                new HttpRequestInitializer() {
-                    @Override
-                    public void initialize(HttpRequest request) throws IOException {
-
-                    }
-                }).setRootUrl(Constants.ROOT_URL).build();
-
-
-        new AsyncTask<Void, Void, Project>() {
-            @Override
-            protected Project doInBackground(Void... params) {
-                try {
-                    return projectApi.getProject(projectId).execute();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Project project) {
-                if (project != null) {
-                    SetMapByDepartmentName(project.getDepartment());
-                    AddMarkerByLocationContent(Long.parseLong(project.getContentId()), project.getName());
-                }
-            }
-        }.execute();
-    }
-
-    private void AddMarkerByLocationContent(final Long contentId, final String text){
-        final ContentApi contentApi = new ContentApi.Builder(
-                AndroidHttp.newCompatibleTransport(),
-                new JacksonFactory(),
-                new HttpRequestInitializer() {
-                    @Override
-                    public void initialize(HttpRequest request) throws IOException {
-
-                    }
-                }).setRootUrl(Constants.ROOT_URL).build();
-
-        new AsyncTask<Void, Void,Content>() {
-            @Override
-            protected Content doInBackground(Void... params) {
-                Content content = null;
-                try {
-                    content = contentApi.getContent(contentId).execute();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return content;
-            }
-
-            @Override
-            protected void onPostExecute(Content content) {
-                if (content != null) {
-                    // Add a marker of project by content-location
-                    LatLng location = null;
-                   try {
-                       location = new LatLng(content.getLocation().getLat(), content.getLocation().getLng());
-                       mMap.addMarker(new MarkerOptions().position(location).title(text));
-                   }catch (Exception exc) {
-                       mMap.addMarker(new MarkerOptions().position(SHENKAR).title(text));
-                   }
-                }
-            }
-        }.execute();
-    }
+//
+//    /*
+//     *   Set Department Map
+//     * */
+//    public void SetDepartmentMap(final Long departmentId){
+//        final DepartmentApi departmentApi = new DepartmentApi.Builder(
+//                AndroidHttp.newCompatibleTransport(),
+//                new JacksonFactory(),
+//                new HttpRequestInitializer() {
+//                    @Override
+//                    public void initialize(HttpRequest request) throws IOException {
+//
+//                    }
+//                }).setRootUrl(Constants.ROOT_URL).build();
+//
+//        new AsyncTask<Void, Void, Department>() {
+//            @Override
+//            protected Department doInBackground(Void... params) {
+//                try {
+//                    return departmentApi.getDepartment(departmentId).execute();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                return null;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(Department department) {
+//                if (department != null) {
+//                    SetMapByDepartmentName(department.getName());
+//                    mMap.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater(),department.getImageUrl()));
+//                }
+//            }
+//        }.execute();
+//    }
+//
+//    /*
+//     *   Set Project Map
+//     * */
+//    public void SetProjectMap(final Long projectId) {
+//        final ProjectApi projectApi = new ProjectApi.Builder(
+//                AndroidHttp.newCompatibleTransport(),
+//                new JacksonFactory(),
+//                new HttpRequestInitializer() {
+//                    @Override
+//                    public void initialize(HttpRequest request) throws IOException {
+//
+//                    }
+//                }).setRootUrl(Constants.ROOT_URL).build();
+//
+//
+//        new AsyncTask<Void, Void, Project>() {
+//            @Override
+//            protected Project doInBackground(Void... params) {
+//                try {
+//                    return projectApi.getProject(projectId).execute();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                return null;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(Project project) {
+//                if (project != null) {
+//                    SetMapByDepartmentName(project.getDepartment());
+//                    AddMarkerByLocationContent(Long.parseLong(project.getContentId()), project.getName());
+//                }
+//            }
+//        }.execute();
+//    }
+//
+//    private void AddMarkerByLocationContent(final Long contentId, final String text){
+//        final ContentApi contentApi = new ContentApi.Builder(
+//                AndroidHttp.newCompatibleTransport(),
+//                new JacksonFactory(),
+//                new HttpRequestInitializer() {
+//                    @Override
+//                    public void initialize(HttpRequest request) throws IOException {
+//
+//                    }
+//                }).setRootUrl(Constants.ROOT_URL).build();
+//
+//        new AsyncTask<Void, Void,Content>() {
+//            @Override
+//            protected Content doInBackground(Void... params) {
+//                Content content = null;
+//                try {
+//                    content = contentApi.getContent(contentId).execute();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                return content;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(Content content) {
+//                if (content != null) {
+//                    // Add a marker of project by content-location
+//                    LatLng location = null;
+//                   try {
+//                       location = new LatLng(content.getLocation().getLat(), content.getLocation().getLng());
+//                       mMap.addMarker(new MarkerOptions().position(location).title(text));
+//                   }catch (Exception exc) {
+//                       mMap.addMarker(new MarkerOptions().position(SHENKAR).title(text));
+//                   }
+//                }
+//            }
+//        }.execute();
+//    }
 
     void AddMarker(LatLng location,String text){
         mMap.addMarker(new MarkerOptions().position(location).title(text));

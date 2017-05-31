@@ -1,19 +1,29 @@
 package il.ac.shenkar.endofyearshenkar.activities;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import il.ac.shenkar.endofyearshenkar.R;
 import il.ac.shenkar.endofyearshenkar.adapters.RoutesRecyclerAdapter;
+import il.ac.shenkar.endofyearshenkar.json.CollegeConfigJson;
 import il.ac.shenkar.endofyearshenkar.json.RouteJson;
+import il.ac.shenkar.endofyearshenkar.utils.DownloadImageTask;
 
 public class RoutesActivity extends ShenkarActivity {
 
     private ArrayList<RouteJson> mRoutes;
     private RoutesRecyclerAdapter adapter;
+
+    private CollegeConfigJson mMainConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +37,29 @@ public class RoutesActivity extends ShenkarActivity {
         mRoutes = new ArrayList<>();
         adapter = new RoutesRecyclerAdapter(this, mRoutes);
         rvProjects.setAdapter(adapter);
+
+        mMainConfig = (CollegeConfigJson) getIntent().getSerializableExtra("main_config");
+
+        if (mMainConfig != null) {
+            new DownloadImageTask((ImageView) findViewById(R.id.toolbaricon)).execute(mMainConfig.getLogoUrl());
+            TextView Suggested_Route_Headline = (TextView) findViewById(R.id.RoutesHeadline);
+            Suggested_Route_Headline.setTextColor(Color.parseColor(mMainConfig.getMainTextColor()));
+
+            LinearLayout LLayout = (LinearLayout) findViewById(R.id.RoutesLayout);
+            LLayout.setBackgroundColor(Color.parseColor(mMainConfig.getSecondaryColor()));
+
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
         adapter.refresh();
+    }
+
+    public void openRoutesRecyclerAdapter(View v) {
+        Intent intent = new Intent(this, RoutesRecyclerAdapter.class);
+        intent.putExtra("main_config", mMainConfig);
+        startActivity(intent);
     }
 }

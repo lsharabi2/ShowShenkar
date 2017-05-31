@@ -2,10 +2,13 @@ package il.ac.shenkar.endofyearshenkar.activities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -15,7 +18,9 @@ import java.util.Set;
 
 import il.ac.shenkar.endofyearshenkar.R;
 import il.ac.shenkar.endofyearshenkar.adapters.DepProjectsRecyclerAdapter;
+import il.ac.shenkar.endofyearshenkar.json.CollegeConfigJson;
 import il.ac.shenkar.endofyearshenkar.json.ProjectJson;
+import il.ac.shenkar.endofyearshenkar.utils.DownloadImageTask;
 
 public class MyRouteActivity extends ShenkarActivity {
     private List<ProjectJson> mProjects;
@@ -23,6 +28,8 @@ public class MyRouteActivity extends ShenkarActivity {
     private DepProjectsRecyclerAdapter adapter;
     private RecyclerView rvProjects;
     private TextView emptyView;
+
+    private CollegeConfigJson mMainConfig;
 
     public static void addProjectId(Context context, Long projectId) {
         SharedPreferences sharedPref = context.getSharedPreferences(
@@ -49,6 +56,21 @@ public class MyRouteActivity extends ShenkarActivity {
         mProjects = new ArrayList<>();
         adapter = new DepProjectsRecyclerAdapter(this, mProjects);
         rvProjects.setAdapter(adapter);
+
+        mMainConfig = (CollegeConfigJson) getIntent().getSerializableExtra("main_config");
+
+        if (mMainConfig != null) {
+            new DownloadImageTask((ImageView) findViewById(R.id.toolbaricon)).execute(mMainConfig.getLogoUrl());
+            TextView MyRoute_Headline = (TextView) findViewById(R.id.MyRouteHeadline);
+            MyRoute_Headline.setTextColor(Color.parseColor(mMainConfig.getMainTextColor()));
+
+            // ColorDrawable bgShape = (ColorDrawable) MyRoute_Headline.getBackground();
+            // bgShape.setColor(Color.parseColor(mMainConfig.getPrimaryColor()));
+
+            LinearLayout LLayout = (LinearLayout) findViewById(R.id.MyRouteLayout);
+            LLayout.setBackgroundColor(Color.parseColor(mMainConfig.getSecondaryColor()));
+
+        }
     }
 
     @Override

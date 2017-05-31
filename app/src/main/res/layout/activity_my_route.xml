@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/MyRouteLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="il.ac.shenkar.endofyearshenkar.activities.MyRouteActivity">
 
     <il.ac.shenkar.endofyearshenkar.utils.BoldAlefTextView
+        android:id="@+id/MyRouteHeadline"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginBottom="5dp"

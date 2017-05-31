@@ -125,6 +125,7 @@ public class MainActivity extends ShenkarActivity {
     private void update_views(CollegeConfigJson config) {
         TextView logoText = (TextView) findViewById(R.id.logo_text);
         logoText.setText(config.getName());
+        logoText.setTextColor(Color.parseColor(config.getMainTextColor()));
 
         ColorDrawable bgShape = (ColorDrawable) logoText.getBackground();
         bgShape.setColor(Color.parseColor(config.getPrimaryColor()));
@@ -145,11 +146,13 @@ public class MainActivity extends ShenkarActivity {
 
     public void openRoutesActivity(View v) {
         Intent intent = new Intent(this, RoutesActivity.class);
+        intent.putExtra("main_config", mMainConfig);
         startActivity(intent);
     }
 
     public void openMyRouteActivity(View v) {
         Intent intent = new Intent(this, MyRouteActivity.class);
+        intent.putExtra("main_config", mMainConfig);
         startActivity(intent);
     }
 

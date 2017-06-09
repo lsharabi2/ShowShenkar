@@ -32,7 +32,7 @@ import il.ac.shenkar.endofyearshenkar.json.JsonURIs;
 
 public class MainActivity extends ShenkarActivity {
 
-    public static CollegeConfigJson mMainConfig;
+
     private static String TAG = "MAIN_ACTIVITY";
     private static String IMAGE_CACHE_DIR = "images";
     private GridView gridView;
@@ -104,9 +104,9 @@ public class MainActivity extends ShenkarActivity {
                 new Response.Listener<CollegeConfigJson>() {
                     @Override
                     public void onResponse(CollegeConfigJson response) {
-                        mMainConfig = response;
-                        if (mMainConfig != null) {
-                            update_views(mMainConfig);
+                        StaticCollegeConfigJson.mMainConfig = response;
+                        if (StaticCollegeConfigJson.mMainConfig != null) {
+                            update_views(StaticCollegeConfigJson.mMainConfig);
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -146,19 +146,19 @@ public class MainActivity extends ShenkarActivity {
 
     public void openRoutesActivity(View v) {
         Intent intent = new Intent(this, RoutesActivity.class);
-        intent.putExtra("main_config", mMainConfig);
+        //   intent.putExtra("main_config", mMainConfig);
         startActivity(intent);
     }
 
     public void openMyRouteActivity(View v) {
         Intent intent = new Intent(this, MyRouteActivity.class);
-        intent.putExtra("main_config", mMainConfig);
+        //  intent.putExtra("main_config", mMainConfig);
         startActivity(intent);
     }
 
     public void openGeneralActivity(View v) {
         Intent intent = new Intent(this, GeneralActivity.class);
-        intent.putExtra("main_config", mMainConfig);
+        //   intent.putExtra("main_config", mMainConfig);
         startActivity(intent);
     }
 

@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
@@ -35,15 +37,18 @@ import il.ac.shenkar.endofyearshenkar.json.GsonRequest;
 import il.ac.shenkar.endofyearshenkar.json.JsonURIs;
 import il.ac.shenkar.endofyearshenkar.json.ProjectJson;
 
-public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjectsRecyclerAdapter.CustomViewHolder> {
+public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjectsRecyclerAdapter.CustomViewHolder> implements Filterable {
     private static String TAG = "DepProjectsRecyclerAdapter";
     private final RequestQueue requestQueue;
     private List<ProjectJson> depProjectList;
+    private List<ProjectJson> filterDepProjectList;
     private Context mContext;
     private ProgressDialog mProgressDialog;
+    private ValueFilter valueFilter;
 
     public DepProjectsRecyclerAdapter(Context context, List<ProjectJson> depProjectList) {
         this.depProjectList = depProjectList;
+        this.filterDepProjectList = depProjectList;
         this.mContext = context;
         this.requestQueue = Volley.newRequestQueue(context);
     }
@@ -72,6 +77,11 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
         }
 
         customViewHolder.txtProjectStudent.setText(namesStr);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return super.getItemId(position);
     }
 
     @Override
@@ -147,6 +157,8 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
 
                         depProjectList.clear();
                         depProjectList.addAll(projects);
+                        filterDepProjectList.clear();
+                        filterDepProjectList.addAll(projects);
                         notifyDataSetChanged();
                     }
                 },
@@ -213,6 +225,8 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
                 if (projects != null) {
                     depProjectList.clear();
                     depProjectList.addAll(projects);
+                    filterDepProjectList.clear();
+                    filterDepProjectList.addAll(projects);
                     notifyDataSetChanged();
                 }
             }
@@ -222,6 +236,14 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
 
     public void clear() {
         depProjectList.clear();
+    }
+
+    @Override
+    public Filter getFilter() {
+        if (valueFilter == null) {
+            valueFilter = new ValueFilter();
+        }
+        return valueFilter;
     }
 
     public class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -251,4 +273,36 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
             mContext.startActivity(intent);
         }
     }
+
+
+    private class ValueFilter extends Filter {
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults results = new FilterResults();
+
+            if (constraint != null && constraint.length() > 0) {
+                List filterList = new ArrayList();
+                for (int i = 0; i < filterDepProjectList.size(); i++) {
+                    if ((filterDepProjectList.get(i).getName().toUpperCase()).contains(constraint.toString().toUpperCase())) {
+                        filterList.add(filterDepProjectList.get(i));
+                    }
+                }
+                results.count = filterList.size();
+                results.values = filterList;
+            } else {
+                results.count = filterDepProjectList.size();
+                results.values = filterDepProjectList;
+            }
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            depProjectList = (List) results.values;
+            notifyDataSetChanged();
+        }
+    }
+
 }

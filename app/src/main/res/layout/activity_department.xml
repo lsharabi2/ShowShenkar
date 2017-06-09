@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/DepartmentLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -53,12 +54,25 @@
 
     </FrameLayout>
 
+    <android.support.v7.widget.SearchView
+        android:id="@+id/activity_department_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white" />
 
-    <view
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/projects"
-        class="android.support.v7.widget.RecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="9"
         android:layoutDirection="rtl" />
+
+    <!--    <view
+            android:id="@+id/projects"
+            class="android.support.v7.widget.RecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="9"
+            android:layoutDirection="rtl" />-->
+
 </LinearLayout>

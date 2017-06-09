@@ -18,7 +18,6 @@ import java.util.Set;
 
 import il.ac.shenkar.endofyearshenkar.R;
 import il.ac.shenkar.endofyearshenkar.adapters.DepProjectsRecyclerAdapter;
-import il.ac.shenkar.endofyearshenkar.json.CollegeConfigJson;
 import il.ac.shenkar.endofyearshenkar.json.ProjectJson;
 import il.ac.shenkar.endofyearshenkar.utils.DownloadImageTask;
 
@@ -29,7 +28,7 @@ public class MyRouteActivity extends ShenkarActivity {
     private RecyclerView rvProjects;
     private TextView emptyView;
 
-    private CollegeConfigJson mMainConfig;
+    //  private CollegeConfigJson mMainConfig;
 
     public static void addProjectId(Context context, Long projectId) {
         SharedPreferences sharedPref = context.getSharedPreferences(
@@ -57,18 +56,18 @@ public class MyRouteActivity extends ShenkarActivity {
         adapter = new DepProjectsRecyclerAdapter(this, mProjects);
         rvProjects.setAdapter(adapter);
 
-        mMainConfig = (CollegeConfigJson) getIntent().getSerializableExtra("main_config");
+        //  StaticCollegeConfigJson.mMainConfig = (CollegeConfigJson) getIntent().getSerializableExtra("main_config");
 
-        if (mMainConfig != null) {
-            new DownloadImageTask((ImageView) findViewById(R.id.toolbaricon)).execute(mMainConfig.getLogoUrl());
+        if (StaticCollegeConfigJson.mMainConfig != null) {
+            new DownloadImageTask((ImageView) findViewById(R.id.toolbaricon)).execute(StaticCollegeConfigJson.mMainConfig.getLogoUrl());
             TextView MyRoute_Headline = (TextView) findViewById(R.id.MyRouteHeadline);
-            MyRoute_Headline.setTextColor(Color.parseColor(mMainConfig.getMainTextColor()));
+            MyRoute_Headline.setTextColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getMainTextColor()));
 
             // ColorDrawable bgShape = (ColorDrawable) MyRoute_Headline.getBackground();
             // bgShape.setColor(Color.parseColor(mMainConfig.getPrimaryColor()));
 
             LinearLayout LLayout = (LinearLayout) findViewById(R.id.MyRouteLayout);
-            LLayout.setBackgroundColor(Color.parseColor(mMainConfig.getSecondaryColor()));
+            LLayout.setBackgroundColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getSecondaryColor()));
 
         }
     }

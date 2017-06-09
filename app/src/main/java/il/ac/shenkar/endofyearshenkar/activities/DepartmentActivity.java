@@ -2,12 +2,15 @@ package il.ac.shenkar.endofyearshenkar.activities;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -57,7 +60,42 @@ public class DepartmentActivity extends ShenkarActivity {
 
         adapter = new DepProjectsRecyclerAdapter(this, mProjects);
         rvProjects.setAdapter(adapter);
+
+
+        SearchView activity_department_search = (SearchView) findViewById(R.id.activity_department_search);
+        activity_department_search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.getFilter().filter(newText);
+                return false;
+            }
+        });
+
+        initialize();
     }
+
+    private void initialize() {
+        if (StaticCollegeConfigJson.mMainConfig != null) {
+            new DownloadImageTask((ImageView) findViewById(R.id.toolbaricon)).execute(StaticCollegeConfigJson.mMainConfig.getLogoUrl());
+            TextView title_Headline = (TextView) findViewById(R.id.title);
+            title_Headline.setTextColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getMainTextColor()));
+
+            // ColorDrawable bgShape = (ColorDrawable) MyRoute_Headline.getBackground();
+            // bgShape.setColor(Color.parseColor(mMainConfig.getPrimaryColor()));
+
+            LinearLayout LLayout = (LinearLayout) findViewById(R.id.DepartmentLayout);
+            LLayout.setBackgroundColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getSecondaryColor()));
+
+        }
+    }
+
+
+
 
     @Override
     public void onResume() {

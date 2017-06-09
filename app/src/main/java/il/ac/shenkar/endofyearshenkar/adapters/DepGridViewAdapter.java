@@ -1,6 +1,7 @@
 package il.ac.shenkar.endofyearshenkar.adapters;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.StateListDrawable;
@@ -27,6 +28,7 @@ import java.util.List;
 
 import il.ac.shenkar.endofyearshenkar.R;
 import il.ac.shenkar.endofyearshenkar.activities.MainActivity;
+import il.ac.shenkar.endofyearshenkar.activities.StaticCollegeConfigJson;
 import il.ac.shenkar.endofyearshenkar.db.DepartmentDbHelper;
 import il.ac.shenkar.endofyearshenkar.json.DepartmentJson;
 import il.ac.shenkar.endofyearshenkar.json.JsonURIs;
@@ -35,18 +37,19 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
 
     private final RequestQueue requestQueue;
     private final DepartmentDbHelper mDbHelper;
-    private MainActivity activity;
+    private Context context;
     private int layoutResourceId;
     private List<DepartmentJson> data;
     private ProgressDialog mProgressDialog;
 
-    public DepGridViewAdapter(MainActivity activity, int layoutResourceId, List<DepartmentJson> data) {
-        super(activity, layoutResourceId, data);
+    public DepGridViewAdapter(Context context, int layoutResourceId, List<DepartmentJson> data) {
+        super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
-        this.activity = activity;
+        this.context = context;
         this.data = data;
-        this.requestQueue = Volley.newRequestQueue(activity);
-        mDbHelper = new DepartmentDbHelper(activity);
+        this.requestQueue = Volley.newRequestQueue(context);
+        mDbHelper = new DepartmentDbHelper(context);
+        System.out.println("Lior DepGridViewAdapter");
         addAll(mDbHelper.getAll());
     }
 
@@ -64,9 +67,10 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
         final ViewHolder holder;
-
+        System.out.println("Liron getView adapter");
         if (row == null) {
-            LayoutInflater inflater = (activity).getLayoutInflater();
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            //  LayoutInflater inflater = getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
             holder = new ViewHolder();
             holder.imageTitle = (TextView) row.findViewById(R.id.text);
@@ -80,14 +84,14 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
         final DepartmentJson item = data.get(position);
         holder.imageTitle.setText(item.getName());
 
-        if (MainActivity.mMainConfig != null) {
-            holder.imageTitle.setTextColor(Color.parseColor(MainActivity.mMainConfig.getMainTextColor()));
-            holder.imageTitle.setBackgroundColor(Color.parseColor(MainActivity.mMainConfig.getSecondaryColor()));
-            holder.image.setBackgroundColor(Color.parseColor(MainActivity.mMainConfig.getSecondaryColor()));
-            holder.layout.setBackgroundDrawable(makeSelector(Color.parseColor(MainActivity.mMainConfig.getPrimaryColor())));
+        if (StaticCollegeConfigJson.mMainConfig != null) {
+            holder.imageTitle.setTextColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getMainTextColor()));
+            holder.imageTitle.setBackgroundColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getSecondaryColor()));
+            holder.image.setBackgroundColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getSecondaryColor()));
+            holder.layout.setBackgroundDrawable(makeSelector(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getPrimaryColor())));
         }
 
-        activity.getImageFetcher().loadImage(item.getImageUrl(), holder.image);
+        ((MainActivity) getContext()).getImageFetcher().loadImage(item.getImageUrl(), holder.image);
         //new DownloadImageTask(holder.image).execute(item.getImageUrl());
 
         return row;
@@ -95,7 +99,7 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
 
     public void refresh() {
 
-        mProgressDialog = ProgressDialog.show(activity, "טוען נתונים", "מעדכן מחלקות", true, true);
+        mProgressDialog = ProgressDialog.show(context, "טוען נתונים", "מעדכן מחלקות", true, true);
 
         JsonArrayRequest req = new JsonArrayRequest(JsonURIs.getDepartmentsByCollegeIdUri(JsonURIs.SHENKAR_COLLEGE_ID),
                 new Response.Listener<JSONArray>() {

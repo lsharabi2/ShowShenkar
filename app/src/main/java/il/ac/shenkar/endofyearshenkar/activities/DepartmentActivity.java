@@ -85,8 +85,8 @@ public class DepartmentActivity extends ShenkarActivity {
             TextView title_Headline = (TextView) findViewById(R.id.title);
             title_Headline.setTextColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getMainTextColor()));
 
-            // ColorDrawable bgShape = (ColorDrawable) MyRoute_Headline.getBackground();
-            // bgShape.setColor(Color.parseColor(mMainConfig.getPrimaryColor()));
+            TextView location_Headline = (TextView) findViewById(R.id.location);
+            location_Headline.setTextColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getMainTextColor()));
 
             LinearLayout LLayout = (LinearLayout) findViewById(R.id.DepartmentLayout);
             LLayout.setBackgroundColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getSecondaryColor()));

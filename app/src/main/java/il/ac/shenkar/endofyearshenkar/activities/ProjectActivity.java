@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +40,7 @@ import il.ac.shenkar.endofyearshenkar.adapters.ProjectGalleryRecyclerAdapter;
 import il.ac.shenkar.endofyearshenkar.json.GsonRequest;
 import il.ac.shenkar.endofyearshenkar.json.JsonURIs;
 import il.ac.shenkar.endofyearshenkar.json.ProjectJson;
+import il.ac.shenkar.endofyearshenkar.utils.DownloadImageTask;
 
 public class ProjectActivity extends ShenkarActivity {
 
@@ -87,8 +90,24 @@ public class ProjectActivity extends ShenkarActivity {
         playVd.setVisibility(View.GONE);
         playVdGray.setVisibility(View.GONE);
         playSDGray.setVisibility(View.GONE);
+        initialize();
 
         refreshProjectById();
+    }
+
+    private void initialize() {
+        if (StaticCollegeConfigJson.mMainConfig != null) {
+            new DownloadImageTask((ImageView) findViewById(R.id.toolbaricon)).execute(StaticCollegeConfigJson.mMainConfig.getLogoUrl());
+            TextView ProjectName_Headline = (TextView) findViewById(R.id.txtProjectName);
+            ProjectName_Headline.setTextColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getMainTextColor()));
+
+            TextView StudentName_Headline = (TextView) findViewById(R.id.txtStudentName);
+            StudentName_Headline.setTextColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getMainTextColor()));
+
+            LinearLayout LLayout = (LinearLayout) findViewById(R.id.LinarProject);
+            LLayout.setBackgroundColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getSecondaryColor()));
+
+        }
     }
 
     @Override

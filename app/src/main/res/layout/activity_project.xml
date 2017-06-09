@@ -6,6 +6,7 @@
     tools:context="il.ac.shenkar.endofyearshenkar.activities.ProjectActivity">
 
     <LinearLayout
+        android:id="@+id/LinarProject"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="50dp"

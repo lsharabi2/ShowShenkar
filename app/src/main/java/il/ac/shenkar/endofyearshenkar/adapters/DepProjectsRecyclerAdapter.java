@@ -3,6 +3,7 @@ package il.ac.shenkar.endofyearshenkar.adapters;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
@@ -33,6 +35,7 @@ import java.util.concurrent.TimeoutException;
 
 import il.ac.shenkar.endofyearshenkar.R;
 import il.ac.shenkar.endofyearshenkar.activities.ProjectActivity;
+import il.ac.shenkar.endofyearshenkar.activities.StaticCollegeConfigJson;
 import il.ac.shenkar.endofyearshenkar.json.GsonRequest;
 import il.ac.shenkar.endofyearshenkar.json.JsonURIs;
 import il.ac.shenkar.endofyearshenkar.json.ProjectJson;
@@ -69,6 +72,8 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
 
         customViewHolder.projectId = depProject.getId();
         customViewHolder.txtProjectName.setText(depProject.getName());
+
+        customViewHolder.dep_project_Line.setBackgroundColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getLineColor()));
         List<String> names = depProject.getStudentNames();
 
         String namesStr = "";
@@ -250,9 +255,11 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
         protected Long projectId;
         protected TextView txtProjectName;
         protected TextView txtProjectStudent;
+        protected LinearLayout dep_project_Line;
 
         public CustomViewHolder(View view) {
             super(view);
+            this.dep_project_Line = (LinearLayout) view.findViewById(R.id.dep_project_Line);
             this.txtProjectName = (TextView) view.findViewById(R.id.project_name);
             this.txtProjectStudent = (TextView) view.findViewById(R.id.project_student);
             txtProjectName.setOnClickListener(this);
@@ -280,14 +287,28 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
-
+            List<ProjectJson> tempArr = new ArrayList<>(filterDepProjectList);
             if (constraint != null && constraint.length() > 0) {
                 List filterList = new ArrayList();
+                // for searching projects
                 for (int i = 0; i < filterDepProjectList.size(); i++) {
                     if ((filterDepProjectList.get(i).getName().toUpperCase()).contains(constraint.toString().toUpperCase())) {
                         filterList.add(filterDepProjectList.get(i));
+                        tempArr.remove(i);
                     }
                 }
+                //searching students in projects
+                for (int i = 0; i < tempArr.size(); i++) {
+                    List<String> studentNames = tempArr.get(i).getStudentNames();
+                    for (String studensName : studentNames) {
+                        if ((studensName.toUpperCase()).contains(constraint.toString().toUpperCase())) {
+                            filterList.add(tempArr.get(i));
+
+                            break;
+                        }
+                    }
+                }
+
                 results.count = filterList.size();
                 results.values = filterList;
             } else {

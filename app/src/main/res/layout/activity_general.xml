@@ -7,13 +7,14 @@
 
 <LinearLayout
 android:layout_width="match_parent"
-android:layout_height="wrap_content"
+    android:layout_height="match_parent"
 android:layout_marginBottom="130dp"
 android:layoutDirection="rtl"
 android:orientation="vertical"
 android:weightSum="1">
 
-<LinearLayout
+    <!-- title -->
+    <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:background="@color/shenkarYellow"
@@ -35,10 +36,10 @@ android:weightSum="1">
 
 </LinearLayout>
 
-<ScrollView
+    <ScrollView
     android:id="@+id/generallayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
     <il.ac.shenkar.endofyearshenkar.utils.AlefTextView
         android:id="@+id/txtGeneralInfo"
@@ -72,11 +73,11 @@ android:weightSum="1">
         android:textDirection="rtl"
         android:textSize="18dp" />
 
-</ScrollView>
+    </ScrollView>
 
 </LinearLayout>
 
-<LinearLayout
+    <LinearLayout
 android:layout_width="match_parent"
 android:layout_height="130dp"
 android:layout_gravity="center_horizontal|bottom"
@@ -93,5 +94,5 @@ android:orientation="horizontal">
     android:src="@drawable/alldepartments" />
 
 </LinearLayout>
-    </FrameLayout>
+</FrameLayout>
 

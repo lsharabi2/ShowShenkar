@@ -8,12 +8,13 @@
     <LinearLayout
         android:id="@+id/LinarProject"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginBottom="50dp"
         android:layoutDirection="rtl"
         android:orientation="vertical"
         android:weightSum="1">
 
+        <!-- Title project-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -44,6 +45,7 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -56,6 +58,7 @@
             android:paddingRight="30dp"
             android:paddingTop="10dp">
 
+            <!-- side main images scroll -->
             <ScrollView
                 android:id="@+id/scrollView"
                 android:layout_width="wrap_content"
@@ -69,15 +72,14 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <view
+                    <android.support.v7.widget.RecyclerView
                         android:id="@+id/project_tumbs"
-                        class="android.support.v7.widget.RecyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="150dp" />
-
                 </LinearLayout>
             </ScrollView>
 
+            <!-- main image -->
             <ImageView
                 android:id="@+id/imgScreenShot"
                 android:layout_width="200dp"
@@ -89,6 +91,8 @@
 
         </FrameLayout>
 
+
+        <!-- general info buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -133,8 +137,9 @@
 
 
         <ScrollView
+            android:id="@+id/activity_project_text_description_sv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <il.ac.shenkar.endofyearshenkar.utils.AlefTextView
                 android:id="@+id/txtProjectDesc"
@@ -149,6 +154,9 @@
         </ScrollView>
 
     </LinearLayout>
+
+
+    <!-- footer -->
 
     <LinearLayout
         android:layout_width="match_parent"

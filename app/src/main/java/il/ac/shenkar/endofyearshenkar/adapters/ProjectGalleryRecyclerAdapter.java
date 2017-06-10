@@ -1,6 +1,7 @@
 package il.ac.shenkar.endofyearshenkar.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -80,7 +81,12 @@ public class ProjectGalleryRecyclerAdapter extends RecyclerView.Adapter<ProjectG
         @Override
         public void onClick(View v) {
             ImageView image = (ImageView) v;
-            mMainImage.setImageBitmap(((BitmapDrawable) image.getDrawable()).getBitmap());
+            BitmapDrawable drawableBitmap = (BitmapDrawable) image.getDrawable();
+
+            if (drawableBitmap != null) {
+                Bitmap drawable = drawableBitmap.getBitmap();
+                mMainImage.setImageBitmap(drawable);
+            }
             ProjectGalleryRecyclerAdapter.this.currentMainImageUrl = imgUrl;
         }
     }

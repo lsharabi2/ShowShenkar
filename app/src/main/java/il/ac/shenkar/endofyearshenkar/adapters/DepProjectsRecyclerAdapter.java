@@ -294,7 +294,7 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
                 for (int i = 0; i < filterDepProjectList.size(); i++) {
                     if ((filterDepProjectList.get(i).getName().toUpperCase()).contains(constraint.toString().toUpperCase())) {
                         filterList.add(filterDepProjectList.get(i));
-                        tempArr.remove(i);
+                        tempArr.remove(filterDepProjectList.get(i));
                     }
                 }
                 //searching students in projects

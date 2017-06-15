@@ -14,10 +14,14 @@ import com.google.zxing.integration.android.IntentResult;
 
 import il.ac.shenkar.endofyearshenkar.R;
 
+
+/**
+ * Action Bar
+ */
 public class ShenkarActivity extends AppCompatActivity {
 
     public String Qrlocation;
-    Long rContent;
+    private Long rContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

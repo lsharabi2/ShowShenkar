@@ -6,8 +6,8 @@ package il.ac.shenkar.endofyearshenkar.json;
 public class LocationJson {
     private long id;
     private String description;
-    private long lat;
-    private long lng;
+    private double lat;
+    private double lng;
     private String url;
 
     public String getDescription() {
@@ -18,7 +18,7 @@ public class LocationJson {
         this.description = description;
     }
 
-    public long getLat() {
+    public double getLat() {
         return lat;
     }
 
@@ -26,7 +26,7 @@ public class LocationJson {
         this.lat = lat;
     }
 
-    public long getLng() {
+    public double getLng() {
         return lng;
     }
 

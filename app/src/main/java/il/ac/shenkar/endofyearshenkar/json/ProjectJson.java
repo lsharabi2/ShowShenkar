@@ -12,7 +12,7 @@ public class ProjectJson {
     private List<String> studentEmails;
     private String videoUrl;
     private String soundUrl;
-    //private LocationJson location;
+    private LocationJson location;
     private List<String> imageUrl;
 
     public long getDepartmentId() {
@@ -71,13 +71,13 @@ public class ProjectJson {
         this.soundUrl = soundUrl;
     }
 
-    //public LocationJson getLocation() {
-    //    return location;
-    //}
+    public LocationJson getLocation() {
+        return location;
+    }
 
-    //public void setLocation(LocationJson location) {
-    //    this.location = location;
-    //}
+    public void setLocation(LocationJson location) {
+        this.location = location;
+    }
 
     public List<String> getImagesUrls() {
         return imageUrl;

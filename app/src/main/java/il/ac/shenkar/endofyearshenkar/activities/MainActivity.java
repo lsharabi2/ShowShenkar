@@ -95,6 +95,11 @@ public class MainActivity extends ShenkarActivity {
         refreshCollegeConfigInfo();
     }
 
+    @Override
+    void setObjectID() {
+
+    }
+
     private void refreshCollegeConfigInfo() {
         // Instantiate the RequestQueue.
         mRequestQueue = Volley.newRequestQueue(this);

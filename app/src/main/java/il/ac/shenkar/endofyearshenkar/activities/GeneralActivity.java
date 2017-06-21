@@ -36,4 +36,9 @@ public class GeneralActivity extends ShenkarActivity {
 
         }
     }
+
+    @Override
+    void setObjectID() {
+
+    }
 }

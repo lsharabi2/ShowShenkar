@@ -65,4 +65,9 @@ public class SuggestedRouteActivity extends ShenkarActivity {
         super.onResume();
         adapter.refresh(mRoute.getProjectIds());
     }
+
+    @Override
+    void setObjectID() {
+
+    }
 }

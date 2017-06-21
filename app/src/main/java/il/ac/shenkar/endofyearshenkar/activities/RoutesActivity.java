@@ -24,6 +24,7 @@ public class RoutesActivity extends ShenkarActivity {
 
 //    private CollegeConfigJson mMainConfig;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +49,11 @@ public class RoutesActivity extends ShenkarActivity {
             LLayout.setBackgroundColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getSecondaryColor()));
 
         }
+    }
+
+    @Override
+    void setObjectID() {
+
     }
 
     @Override

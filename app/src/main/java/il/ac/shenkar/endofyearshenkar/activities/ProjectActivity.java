@@ -93,7 +93,9 @@ public class ProjectActivity extends ShenkarActivity {
         initialize();
 
         refreshProjectById();
+        setObjectID();
     }
+
 
     private void initialize() {
         if (StaticCollegeConfigJson.mMainConfig != null) {
@@ -411,6 +413,7 @@ public class ProjectActivity extends ShenkarActivity {
                 mProgressDialog.dismiss();
                 if (project != null) {
                     mProject = project;
+                    //TODO may be here add to static list
                     refreshProjectData();
                 }
             }
@@ -515,7 +518,16 @@ public class ProjectActivity extends ShenkarActivity {
         }.execute();
     }*/
 
+
+    @Override
+    void setObjectID() {
+        this.objectType = "project";
+        this.objectId = projectId;
+        System.out.println("Liron showLocation projectId =" + projectId);
+    }
     public void showLocation(View v) {
+
+        System.out.println("Liron showLocation ");
         Intent i = new Intent(this, MapActivity.class);
         i.putExtra("objectId", projectId);
         i.putExtra("objectType", "project");

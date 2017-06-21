@@ -31,6 +31,7 @@ import il.ac.shenkar.endofyearshenkar.activities.MainActivity;
 import il.ac.shenkar.endofyearshenkar.activities.StaticCollegeConfigJson;
 import il.ac.shenkar.endofyearshenkar.db.DepartmentDbHelper;
 import il.ac.shenkar.endofyearshenkar.json.DepartmentJson;
+import il.ac.shenkar.endofyearshenkar.json.DepartmentJsonStatic;
 import il.ac.shenkar.endofyearshenkar.json.JsonURIs;
 
 public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
@@ -67,7 +68,7 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
         final ViewHolder holder;
-        System.out.println("Liron getView adapter");
+
         if (row == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             //  LayoutInflater inflater = getLayoutInflater();
@@ -121,6 +122,8 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
                             mProgressDialog.dismiss();
                         }
 
+                        DepartmentJsonStatic.getDepartmentJsonList().clear();
+                        DepartmentJsonStatic.setDepartmentJsonList(departments);
                         data.clear();
                         data.addAll(departments);
                         notifyDataSetChanged();

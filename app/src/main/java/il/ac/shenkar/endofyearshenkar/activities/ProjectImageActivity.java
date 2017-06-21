@@ -17,4 +17,9 @@ public class ProjectImageActivity extends ShenkarActivity {
 
         new DownloadImageTask((ImageView)findViewById(R.id.image)).execute(imageUrl);
     }
+
+    @Override
+    void setObjectID() {
+
+    }
 }

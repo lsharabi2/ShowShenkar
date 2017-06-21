@@ -3,7 +3,6 @@ package il.ac.shenkar.endofyearshenkar.activities;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -22,16 +21,19 @@ import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.TileProvider;
 import com.google.android.gms.maps.model.UrlTileProvider;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.Locale;
 
 import il.ac.shenkar.endofyearshenkar.R;
-import il.ac.shenkar.endofyearshenkar.utils.PermissionUtils;
 import il.ac.shenkar.endofyearshenkar.adapters.PopupAdapter;
-
-import il.ac.shenkar.endofyearshenkar.utils.Constants;
+import il.ac.shenkar.endofyearshenkar.json.DepartmentJson;
+import il.ac.shenkar.endofyearshenkar.json.DepartmentJsonStatic;
+import il.ac.shenkar.endofyearshenkar.json.LocationJson;
+import il.ac.shenkar.endofyearshenkar.json.ProjectJson;
+import il.ac.shenkar.endofyearshenkar.json.ProjectJsonStatic;
+import il.ac.shenkar.endofyearshenkar.utils.PermissionUtils;
 
 public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -77,21 +79,66 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
 
         objectId = getIntent().getLongExtra("objectId", 0);
         objectType = getIntent().getStringExtra("objectType");
+        System.out.println("Liron objectId =" + objectId);
+        System.out.println("Liron objectType =" + objectType);
+    }
+
+    @Override
+    void setObjectID() {
     }
 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        System.out.println("Liron onMapReady objectId =" + objectId);
+        System.out.println("Liron onMapReady objectType =" + objectType);
         mMap = googleMap;
         enableMyLocation();
-//        if (objectType.equals("project")){
-//            SetProjectMap(objectId);
-//        }else if (objectType.equals("department")){
-//            SetDepartmentMap(objectId);
-//        }
-//        else if (objectType.equals("general")){
-//            SetGeneralMap();
-//        }
+        if (objectType.equals("project")) {
+            SetProjectMap(objectId);
+        } else if (objectType.equals("department")) {
+            String strUrl = SetDepartmentMap(objectId);
+
+            mMap.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater(), strUrl));
+        } else if (objectType.equals("general")) {
+            SetGeneralMap();
+        }
+    }
+
+    private String SetDepartmentMap(final Long departmentId) {
+        List<DepartmentJson> deparment = DepartmentJsonStatic.getDepartmentJsonList();
+        String strUrl = "";
+        for (DepartmentJson departmentJson : deparment) {
+            if (departmentJson.getId() == departmentId) {
+                //  System.out.println("Liron departmentJson.getName() =" + departmentJson.getName());
+                SetMapByDepartmentName(departmentJson.getName());
+                strUrl = departmentJson.getImageUrl();
+                return strUrl;
+                //   mMap.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater(),departmentJson.getImageUrl()));
+            }
+        }
+        return strUrl;
+    }
+
+    private void SetProjectMap(final Long projectId) {
+        List<ProjectJson> projectList = ProjectJsonStatic.getProjectJsonList();
+        for (ProjectJson project : projectList) {
+            SetDepartmentMap(project.getDepartmentId());
+            AddMarkerByLocationContent(project);
+
+        }
+    }
+
+    private void AddMarkerByLocationContent(ProjectJson project) {
+        LocationJson locationJson = project.getLocation();
+        double lat = locationJson.getLat();
+        double lng = locationJson.getLng();
+        LatLng location = new LatLng(lat, lng);
+        mMap.addMarker(new MarkerOptions().position(location).title(project.getName()));
+
+
+        //TODO check if no location in the project
+
     }
     /*
      *   Set General Map
@@ -100,10 +147,10 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
         SetMapByDepartmentName("שנקר");
         mMap.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater(),""));
     }
-//
-//    /*
-//     *   Set Department Map
-//     * */
+
+    /*
+     *   Set Department Map
+     * */
 //    public void SetDepartmentMap(final Long departmentId){
 //        final DepartmentApi departmentApi = new DepartmentApi.Builder(
 //                AndroidHttp.newCompatibleTransport(),
@@ -247,6 +294,7 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
                 break;
             }
             case "עיצוב טקסטיל": {
+
                 path = "Pernik/-1";
                 building = "Pernik";
                 break;
@@ -300,6 +348,7 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
 
     private void setUpMap(final String path) {
 
+
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         TileProvider tileProvider = new UrlTileProvider(256, 256) {
@@ -311,6 +360,7 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
                 URL url = null;
                 try {
                     url = new URL(s);
+                    //   System.out.println("Liron path url="+ url);
                 } catch (MalformedURLException e) {
                     throw new AssertionError(e);
                 }

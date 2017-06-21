@@ -73,6 +73,11 @@ public class MyRouteActivity extends ShenkarActivity {
     }
 
     @Override
+    void setObjectID() {
+
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         adapter.clear();

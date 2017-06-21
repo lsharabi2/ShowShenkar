@@ -34,24 +34,24 @@ import il.ac.shenkar.endofyearshenkar.utils.PermissionUtils;
 
 public class ProjectLocationMap extends ShenkarActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    private static final LatLng PERNIK = new LatLng(32.09006641826965 , 34.80311807245016);
+    private static final LatLng MITSHLE = new LatLng(32.09005278383782, 34.80274926871061);
+    private static final LatLng INTERIOR_DESIGN = new LatLng(32.09030615669672, 34.803183311601877);
+    private static final LatLng SHENKAR = new LatLng(32.09039421212218, 34.8030037432909);
+    private static final LatLng ELIT = new LatLng(32.08264557800064, 34.80440218001604);
+    /**
+     * Request code for location permission request.
+     *
+     * @see #onRequestPermissionsResult(int, String[], int[])
+     */
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private final List<BitmapDescriptor> mImages = new ArrayList<BitmapDescriptor>();
     private TextView projectName;
     private Long projectId;
     private GoogleApiClient mGoogleApiClient;
     private GoogleMap projectMap;
     private Location mLastLocation;
-
-
-    private static final LatLng PERNIK = new LatLng(32.09006641826965 , 34.80311807245016);
-
-    private static final LatLng MITSHLE = new LatLng(32.09005278383782, 34.80274926871061);
-
-    private static final LatLng INTERIOR_DESIGN = new LatLng(32.09030615669672, 34.803183311601877);
-
-    private static final LatLng SHENKAR = new LatLng(32.09039421212218, 34.8030037432909);
-
-    private static final LatLng ELIT = new LatLng(32.08264557800064, 34.80440218001604);
-
-    private final List<BitmapDescriptor> mImages = new ArrayList<BitmapDescriptor>();
+    private GroundOverlay mGroundOverlay;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -60,14 +60,6 @@ public class ProjectLocationMap extends ShenkarActivity implements OnMapReadyCal
         inflater.inflate(R.menu.action_bar_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
-    /**
-     * Request code for location permission request.
-     *
-     * @see #onRequestPermissionsResult(int, String[], int[])
-     */
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-    private GroundOverlay mGroundOverlay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,5 +192,11 @@ public class ProjectLocationMap extends ShenkarActivity implements OnMapReadyCal
             // Access to the location has been granted to the app.
             projectMap.setMyLocationEnabled(true);
         }
+    }
+
+
+    @Override
+    void setObjectID() {
+
     }
 }

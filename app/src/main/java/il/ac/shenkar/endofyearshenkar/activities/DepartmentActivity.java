@@ -1,13 +1,11 @@
 package il.ac.shenkar.endofyearshenkar.activities;
 
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -77,7 +75,10 @@ public class DepartmentActivity extends ShenkarActivity {
         });
 
         initialize();
+
+        setObjectID();
     }
+
 
     private void initialize() {
         if (StaticCollegeConfigJson.mMainConfig != null) {
@@ -103,10 +104,22 @@ public class DepartmentActivity extends ShenkarActivity {
         adapter.refresh(mDepartmentId);
     }
 
-    public void showDepartmentLocation(View v) {
-        Intent i = new Intent(this, MapActivity.class);
-        i.putExtra("objectId", mDepartmentId);
-        i.putExtra("objectType", "department");
-        startActivity(i);
+//    public void showDepartmentLocation(View v) {
+//
+//        System.out.println("Liron showDepartmentLocation ");
+//
+//        Intent i = new Intent(this, MapActivity.class);
+//        i.putExtra("objectId", mDepartmentId);
+//        i.putExtra("objectType", "department");
+//        startActivity(i);
+//    }
+
+
+    @Override
+    void setObjectID() {
+        System.out.println("Liron  setObjectID mDepartmentId =" + mDepartmentId);
+        this.objectId = mDepartmentId;
+        this.objectType = "department";
     }
+
 }

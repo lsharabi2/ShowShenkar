@@ -39,6 +39,7 @@ import il.ac.shenkar.endofyearshenkar.activities.StaticCollegeConfigJson;
 import il.ac.shenkar.endofyearshenkar.json.GsonRequest;
 import il.ac.shenkar.endofyearshenkar.json.JsonURIs;
 import il.ac.shenkar.endofyearshenkar.json.ProjectJson;
+import il.ac.shenkar.endofyearshenkar.json.ProjectJsonStatic;
 
 public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjectsRecyclerAdapter.CustomViewHolder> implements Filterable {
     private static String TAG = "DepProjectsRecyclerAdapter";
@@ -151,19 +152,25 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
                         for (int i = 0; i < response.length(); i++) {
                             try {
                                 projects.add(new Gson().fromJson(response.getString(i), ProjectJson.class));
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
 
+
                         //show complition in UI
                         //fill grid view with data
                         mProgressDialog.dismiss();
 
-                        depProjectList.clear();
-                        depProjectList.addAll(projects);
-                        filterDepProjectList.clear();
-                        filterDepProjectList.addAll(projects);
+                        clearAndAddProjects(projects);
+
+
+//                        depProjectList.clear();
+//                        depProjectList.addAll(projects);
+//                        filterDepProjectList.clear();
+//                        filterDepProjectList.addAll(projects);
+
                         notifyDataSetChanged();
                     }
                 },
@@ -176,6 +183,18 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
                 });
 
         requestQueue.add(req);
+    }
+
+
+    private void clearAndAddProjects(List<ProjectJson> projects) {
+
+        ProjectJsonStatic.getProjectJsonList().clear();
+        ProjectJsonStatic.setProjectJsonList(projects);
+
+        depProjectList.clear();
+        depProjectList.addAll(projects);
+        filterDepProjectList.clear();
+        filterDepProjectList.addAll(projects);
     }
 
     public ProjectJson getProjectById(long projectId) {
@@ -228,10 +247,13 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
                 //show complition in UI
                 //fill grid view with data
                 if (projects != null) {
-                    depProjectList.clear();
-                    depProjectList.addAll(projects);
-                    filterDepProjectList.clear();
-                    filterDepProjectList.addAll(projects);
+
+                    clearAndAddProjects(projects);
+
+//                    depProjectList.clear();
+//                    depProjectList.addAll(projects);
+//                    filterDepProjectList.clear();
+//                    filterDepProjectList.addAll(projects);
                     notifyDataSetChanged();
                 }
             }

@@ -18,9 +18,11 @@ import il.ac.shenkar.endofyearshenkar.R;
 /**
  * Action Bar
  */
-public class ShenkarActivity extends AppCompatActivity {
+public abstract class ShenkarActivity extends AppCompatActivity {
 
     public String Qrlocation;
+    public Long objectId = 0l;
+    public String objectType = "general";
     private Long rContent;
 
     @Override
@@ -55,10 +57,20 @@ public class ShenkarActivity extends AppCompatActivity {
         });
     }
 
+    abstract void setObjectID();
+
+
     private void showMap() {
+        System.out.println("Liron showMap");
+
         Intent i = new Intent(this, MapActivity.class);
-        i.putExtra("objectId", "general");
-        i.putExtra("objectType", "general");
+
+        i.putExtra("objectId", objectId);
+        i.putExtra("objectType", objectType);
+
+
+//        i.putExtra("objectId", "general");
+//        i.putExtra("objectType", "general");
         startActivity(i);
     }
 
@@ -66,6 +78,7 @@ public class ShenkarActivity extends AppCompatActivity {
     * calling for the scanner to start and using zxing package for different customize options
     * */
     public void openScanner() {
+
         IntentIntegrator integrator = new IntentIntegrator(this);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
         integrator.setPrompt("waiting for code to scan");
@@ -78,7 +91,9 @@ public class ShenkarActivity extends AppCompatActivity {
     * working the result of the scan*/
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
         if (result != null) {
+
             if (result.getContents() == null) {
                 Log.d("MainActivity", "Cancelled scan");
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
@@ -86,14 +101,19 @@ public class ShenkarActivity extends AppCompatActivity {
 //                String locationId;
                 //DBHelper helper = new DBHelper();
                 try {
-                    String oType = result.getContents().split(";")[0];
-                    Long oID = Long.valueOf(result.getContents().split(";")[1]);
+                    String oType = result.getContents().split(";")[1];
+
+                    Long oID = Long.valueOf(result.getContents().split(";")[0]);
+
                     //rContent = Long.valueOf(result.getContents());
                     //locationId = result.getContents();
+
                     Intent to_mapActivity = new Intent(this, MapActivity.class);
                     to_mapActivity.putExtra("objectId",oID);
                     to_mapActivity.putExtra("objectType", oType);
+
                     startActivity(to_mapActivity);
+
 
                 } catch (NumberFormatException e){
 

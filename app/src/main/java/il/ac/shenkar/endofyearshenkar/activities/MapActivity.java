@@ -123,8 +123,10 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
     private void SetProjectMap(final Long projectId) {
         List<ProjectJson> projectList = ProjectJsonStatic.getProjectJsonList();
         for (ProjectJson project : projectList) {
-            SetDepartmentMap(project.getDepartmentId());
-            AddMarkerByLocationContent(project);
+            if (project.getId() == projectId) {
+                SetDepartmentMap(project.getDepartmentId());
+                AddMarkerByLocationContent(project);
+            }
 
         }
     }
@@ -299,7 +301,7 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
                 building = "Pernik";
                 break;
             }
-            case "אומנות רב תחומית": {
+            case "אמנות רב תחומית": {
                 path = "Mitchle/7";
                 building = "Mitchle";
                 // בבנין עלית ההיסטורי
@@ -326,7 +328,7 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
 
         switch (building){
             case "Pernik" :{
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(PERNIK,20));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(PERNIK, 20));
                 AddMarker(PERNIK, department + " -  בניין פרניק");
             break;
             }

@@ -61,8 +61,6 @@ public abstract class ShenkarActivity extends AppCompatActivity {
 
 
     private void showMap() {
-        System.out.println("Liron showMap");
-
         Intent i = new Intent(this, MapActivity.class);
 
         i.putExtra("objectId", objectId);

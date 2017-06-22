@@ -19,6 +19,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import il.ac.shenkar.endofyearshenkar.R;
-import il.ac.shenkar.endofyearshenkar.activities.MainActivity;
 import il.ac.shenkar.endofyearshenkar.activities.StaticCollegeConfigJson;
 import il.ac.shenkar.endofyearshenkar.db.DepartmentDbHelper;
 import il.ac.shenkar.endofyearshenkar.json.DepartmentJson;
@@ -92,7 +92,9 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
             holder.layout.setBackgroundDrawable(makeSelector(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getPrimaryColor())));
         }
 
-        ((MainActivity) getContext()).getImageFetcher().loadImage(item.getImageUrl(), holder.image);
+
+        ImageLoader.getInstance().displayImage(item.getImageUrl(), holder.image);
+
         //new DownloadImageTask(holder.image).execute(item.getImageUrl());
 
         return row;

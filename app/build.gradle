@@ -38,4 +38,5 @@ dependencies {
     //compile 'com.google.android.gms:play-services:9.0.2'
     compile 'com.google.android.gms:play-services-maps:9.2.0'
     compile 'com.google.android.gms:play-services-location:9.2.0'
+    compile files('libs/universal-image-loader-1.9.5.jar')
 }

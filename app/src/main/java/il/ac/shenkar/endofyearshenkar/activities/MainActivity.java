@@ -1,10 +1,10 @@
 package il.ac.shenkar.endofyearshenkar.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -17,14 +17,15 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import il.ac.shenkar.endofyearshenkar.R;
 import il.ac.shenkar.endofyearshenkar.adapters.DepGridViewAdapter;
-import il.ac.shenkar.endofyearshenkar.imagescache.ImageCache;
-import il.ac.shenkar.endofyearshenkar.imagescache.ImageFetcher;
 import il.ac.shenkar.endofyearshenkar.json.CollegeConfigJson;
 import il.ac.shenkar.endofyearshenkar.json.DepartmentJson;
 import il.ac.shenkar.endofyearshenkar.json.GsonRequest;
@@ -39,35 +40,13 @@ public class MainActivity extends ShenkarActivity {
     private DepGridViewAdapter gridAdapter;
     private List<DepartmentJson> mDepartments;
     private RequestQueue mRequestQueue;
-    private ImageFetcher mImageFetcher;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // Fetch screen height and width, to use as our max size when loading images as this
-        // activity runs full screen
-        final DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        final int height = displayMetrics.heightPixels;
-        final int width = displayMetrics.widthPixels;
-
-        // For this sample we'll use half of the longest width to resize our images. As the
-        // image scaling ensures the image is larger than this, we should be left with a
-        // resolution that is appropriate for both portrait and landscape. For best image quality
-        // we shouldn't divide by 2, but this will use more memory and require a larger memory
-        // cache.
-        final int longest = (height > width ? height : width) / 2;
-
-        ImageCache.ImageCacheParams cacheParams =
-                new ImageCache.ImageCacheParams(this, IMAGE_CACHE_DIR);
-        cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
-
-        // The ImageFetcher takes care of loading images into our ImageView children asynchronously
-        mImageFetcher = new ImageFetcher(this, longest);
-        mImageFetcher.addImageCache(getSupportFragmentManager(), cacheParams);
-        mImageFetcher.setImageFadeIn(true);
+        initImageLoader(getBaseContext());
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
@@ -93,6 +72,20 @@ public class MainActivity extends ShenkarActivity {
         });
 
         refreshCollegeConfigInfo();
+    }
+
+    private void initImageLoader(Context baseContext) {
+        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).build();
+
+        ImageLoaderConfiguration.Builder config = new ImageLoaderConfiguration.Builder(baseContext);
+        config.defaultDisplayImageOptions(defaultOptions);
+        config.diskCacheSize(50 * 1024 * 1024); //50MiB
+
+        ImageLoader.getInstance().init(config.build());
+
+
+        //if neded add
+
     }
 
     @Override
@@ -140,7 +133,7 @@ public class MainActivity extends ShenkarActivity {
         bgShape.setColor(Color.parseColor(config.getSecondaryColor()));
 
         ImageView logo_img = (ImageView) findViewById(R.id.toolbaricon);
-        getImageFetcher().loadImage(config.getLogoUrl(), logo_img);
+        ImageLoader.getInstance().displayImage(config.getLogoUrl(), logo_img);
     }
 
     private String getStringResourceByName(String aString) {
@@ -171,7 +164,7 @@ public class MainActivity extends ShenkarActivity {
     public void onResume() {
         super.onResume();
         gridAdapter.refresh();
-        mImageFetcher.setExitTasksEarly(false);
+
     }
 
     @Override
@@ -183,20 +176,4 @@ public class MainActivity extends ShenkarActivity {
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mImageFetcher.setExitTasksEarly(true);
-        mImageFetcher.flushCache();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mImageFetcher.closeCache();
-    }
-
-    public ImageFetcher getImageFetcher() {
-        return mImageFetcher;
-    }
 }

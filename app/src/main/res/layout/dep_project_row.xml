@@ -10,7 +10,8 @@
     android:gravity="center_horizontal"
     android:layoutDirection="rtl"
     android:orientation="horizontal">
-    <il.ac.shenkar.endofyearshenkar.utils.AlefTextView
+
+<il.ac.shenkar.endofyearshenkar.utils.AlefTextView
         android:id="@+id/project_student"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

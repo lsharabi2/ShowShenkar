@@ -139,12 +139,13 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
             }.execute();
         }
     */
-    public void refresh(final long departmentId) {
+    public synchronized void refresh(final long departmentId) {
 
         mProgressDialog = ProgressDialog.show(mContext, "טוען נתונים", "מעדכן פרויקטים", true, true);
 
         JsonArrayRequest req = new JsonArrayRequest(JsonURIs.getProjectsByDepartmentIdUri(JsonURIs.SHENKAR_COLLEGE_ID, departmentId),
                 new Response.Listener<JSONArray>() {
+
                     @Override
                     public void onResponse(JSONArray response) {
                         final List<ProjectJson> projects = new ArrayList<>();
@@ -164,13 +165,6 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
                         mProgressDialog.dismiss();
 
                         clearAndAddProjects(projects);
-
-
-//                        depProjectList.clear();
-//                        depProjectList.addAll(projects);
-//                        filterDepProjectList.clear();
-//                        filterDepProjectList.addAll(projects);
-
                         notifyDataSetChanged();
                     }
                 },
@@ -247,13 +241,7 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
                 //show complition in UI
                 //fill grid view with data
                 if (projects != null) {
-
                     clearAndAddProjects(projects);
-
-//                    depProjectList.clear();
-//                    depProjectList.addAll(projects);
-//                    filterDepProjectList.clear();
-//                    filterDepProjectList.addAll(projects);
                     notifyDataSetChanged();
                 }
             }
@@ -278,6 +266,7 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
         protected TextView txtProjectName;
         protected TextView txtProjectStudent;
         protected LinearLayout dep_project_Line;
+
 
         public CustomViewHolder(View view) {
             super(view);

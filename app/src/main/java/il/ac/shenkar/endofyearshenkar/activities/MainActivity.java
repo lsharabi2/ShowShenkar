@@ -2,6 +2,7 @@ package il.ac.shenkar.endofyearshenkar.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -30,6 +32,7 @@ import il.ac.shenkar.endofyearshenkar.json.CollegeConfigJson;
 import il.ac.shenkar.endofyearshenkar.json.DepartmentJson;
 import il.ac.shenkar.endofyearshenkar.json.GsonRequest;
 import il.ac.shenkar.endofyearshenkar.json.JsonURIs;
+import il.ac.shenkar.endofyearshenkar.utils.NetworkUtil;
 
 public class MainActivity extends ShenkarActivity {
 
@@ -40,6 +43,8 @@ public class MainActivity extends ShenkarActivity {
     private DepGridViewAdapter gridAdapter;
     private List<DepartmentJson> mDepartments;
     private RequestQueue mRequestQueue;
+    private IntentFilter filter;
+    private TextView logoText;
 
 
     @Override
@@ -70,6 +75,7 @@ public class MainActivity extends ShenkarActivity {
                 startActivity(intent);
             }
         });
+
 
         refreshCollegeConfigInfo();
     }
@@ -121,7 +127,7 @@ public class MainActivity extends ShenkarActivity {
     }
 
     private void update_views(CollegeConfigJson config) {
-        TextView logoText = (TextView) findViewById(R.id.logo_text);
+        logoText = (TextView) findViewById(R.id.logo_text);
         logoText.setText(config.getName());
         logoText.setTextColor(Color.parseColor(config.getMainTextColor()));
 
@@ -160,20 +166,20 @@ public class MainActivity extends ShenkarActivity {
         startActivity(intent);
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
         gridAdapter.refresh();
-
+        String status = NetworkUtil.getConnectivityStatusString(MainActivity.this);
+        Toast.makeText(MainActivity.this, status, Toast.LENGTH_LONG).show();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
         if (mRequestQueue != null) {
             mRequestQueue.cancelAll(TAG);
         }
     }
-
 }

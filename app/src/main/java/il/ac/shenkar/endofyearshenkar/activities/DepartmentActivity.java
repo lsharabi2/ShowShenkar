@@ -29,6 +29,7 @@ public class DepartmentActivity extends ShenkarActivity {
     private ImageButton buttonWhere;
     private AlertDialog.Builder dialog;
     private String mLocation;
+    private RecyclerView rvProjects;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +52,9 @@ public class DepartmentActivity extends ShenkarActivity {
         new DownloadImageTask(imageView).execute(imageUrl);
 
         // Initialize recycler view
-        RecyclerView rvProjects = (RecyclerView) findViewById(R.id.projects);
+        rvProjects = (RecyclerView) findViewById(R.id.projects);
         rvProjects.setLayoutManager(new LinearLayoutManager(this));
+
 
         mProjects = new ArrayList<>();
 

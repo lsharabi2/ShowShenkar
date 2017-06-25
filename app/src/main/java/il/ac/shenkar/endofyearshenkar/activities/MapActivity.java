@@ -90,8 +90,6 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        System.out.println("Liron onMapReady objectId =" + objectId);
-        System.out.println("Liron onMapReady objectType =" + objectType);
         mMap = googleMap;
         enableMyLocation();
         if (objectType.equals("project")) {
@@ -110,8 +108,11 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
         String strUrl = "";
         for (DepartmentJson departmentJson : deparment) {
             if (departmentJson.getId() == departmentId) {
-                //  System.out.println("Liron departmentJson.getName() =" + departmentJson.getName());
-                SetMapByDepartmentName(departmentJson.getName());
+                LocationJson locationJson = departmentJson.getLocation();
+                double lat = locationJson.getLat();
+                double lng = locationJson.getLng();
+                LatLng location = new LatLng(lat, lng);
+                SetMapByDepartmentName(departmentJson.getName(), location);
                 strUrl = departmentJson.getImageUrl();
                 return strUrl;
                 //   mMap.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater(),departmentJson.getImageUrl()));
@@ -146,7 +147,7 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
      *   Set General Map
      * */
     public void SetGeneralMap(){
-        SetMapByDepartmentName("שנקר");
+        SetMapByDepartmentName("שנקר", SHENKAR);
         mMap.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater(),""));
     }
 
@@ -264,7 +265,7 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
         mMap.addMarker(new MarkerOptions().position(location).title(text));
     }
 
-    private void SetMapByDepartmentName(String department){
+    private void SetMapByDepartmentName(String department, LatLng location) {
         String path = null;
         String building = null;
         switch (department) {
@@ -329,18 +330,18 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
         switch (building){
             case "Pernik" :{
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(PERNIK, 20));
-                AddMarker(PERNIK, department + " -  בניין פרניק");
+                AddMarker(location, department + " -  בניין פרניק");
             break;
             }
             case "Mitchle" :{
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(MITSHLE,20));
-                AddMarker(MITSHLE, department + " - בניין מיטשל");
+                AddMarker(location, department + " - בניין מיטשל");
                 break;
             }
             case "Shenkar" :
             default:{
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(SHENKAR,18));
-                AddMarker(SHENKAR, department);
+                AddMarker(location, department);
                 break;
             }
         }

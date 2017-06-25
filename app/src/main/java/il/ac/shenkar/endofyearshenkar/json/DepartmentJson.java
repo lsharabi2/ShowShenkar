@@ -10,6 +10,7 @@ public class DepartmentJson implements Serializable {
     private String imageUrl;
     private String largeImageUrl;
     private String locationDescription;
+    private LocationJson location;
 
     public long getId() {
         return id;
@@ -49,5 +50,13 @@ public class DepartmentJson implements Serializable {
 
     public void setLocationDescription(String locationDescription) {
         this.locationDescription = locationDescription;
+    }
+
+    public LocationJson getLocation() {
+        return location;
+    }
+
+    public void setLocation(LocationJson location) {
+        this.location = location;
     }
 }

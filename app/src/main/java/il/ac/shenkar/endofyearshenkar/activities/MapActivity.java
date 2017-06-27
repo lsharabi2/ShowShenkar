@@ -325,6 +325,10 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
                 building = "Shenkar";
                 break;
             }
+            default:
+                path = "Anna";
+                building = "Shenkar";
+                break;
         }
 
         switch (building){

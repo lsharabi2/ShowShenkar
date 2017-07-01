@@ -74,7 +74,10 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
         customViewHolder.projectId = depProject.getId();
         customViewHolder.txtProjectName.setText(depProject.getName());
 
-        customViewHolder.dep_project_Line.setBackgroundColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getLineColor()));
+        //TODO
+        if (StaticCollegeConfigJson.mMainConfig != null) {
+            customViewHolder.dep_project_Line.setBackgroundColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getLineColor()));
+        }
         List<String> names = depProject.getStudentNames();
 
         String namesStr = "";

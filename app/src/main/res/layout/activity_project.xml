@@ -122,6 +122,17 @@
                 android:scaleType="fitXY"
                 android:src="@drawable/location" />
 
+            <ImageButton
+                android:id="@+id/btnLike"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
+                android:background="@color/shenkarYellow"
+                android:onClick="Like"
+                android:scaleType="fitXY"
+                android:src="@drawable/like" />
+
 
             <ImageButton
                 android:id="@+id/btnShare"
@@ -129,7 +140,6 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@color/shenkarYellow"
-                android:onClick="shareProject"
                 android:scaleType="fitXY"
                 android:src="@drawable/share" />
 

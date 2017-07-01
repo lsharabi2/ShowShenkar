@@ -60,25 +60,26 @@ public class MainActivity extends ShenkarActivity {
         gridAdapter = new DepGridViewAdapter(this, R.layout.dep_grid_item_layout, mDepartments);
         gridView.setAdapter(gridAdapter);
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                DepartmentJson item = (DepartmentJson) parent.getItemAtPosition(position);
-
-                //Create intent
-                Intent intent = new Intent(MainActivity.this, DepartmentActivity.class);
-                intent.putExtra("title", item.getName());
-                intent.putExtra("id", item.getId());
-                intent.putExtra("location", item.getLocationDescription());
-                intent.putExtra("image", item.getLargeImageUrl());
-
-                //Start details activity
-                startActivity(intent);
-            }
-        });
+//        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+//                DepartmentJson item = (DepartmentJson) parent.getItemAtPosition(position);
+//
+//                //Create intent
+//                Intent intent = new Intent(MainActivity.this, DepartmentActivity.class);
+//                intent.putExtra("title", item.getName());
+//                intent.putExtra("id", item.getId());
+//                intent.putExtra("location", item.getLocationDescription());
+//                intent.putExtra("image", item.getLargeImageUrl());
+//
+//                //Start details activity
+//                startActivity(intent);
+//            }
+//        });
 
 
         refreshCollegeConfigInfo();
     }
+
 
     private void initImageLoader(Context baseContext) {
         DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).build();
@@ -140,6 +141,25 @@ public class MainActivity extends ShenkarActivity {
 
         ImageView logo_img = (ImageView) findViewById(R.id.toolbaricon);
         ImageLoader.getInstance().displayImage(config.getLogoUrl(), logo_img);
+
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                DepartmentJson item = (DepartmentJson) parent.getItemAtPosition(position);
+
+                //Create intent
+                Intent intent = new Intent(MainActivity.this, DepartmentActivity.class);
+                intent.putExtra("title", item.getName());
+                intent.putExtra("id", item.getId());
+                intent.putExtra("location", item.getLocationDescription());
+                intent.putExtra("image", item.getLargeImageUrl());
+
+                //Start details activity
+                startActivity(intent);
+            }
+        });
+
+
     }
 
     private String getStringResourceByName(String aString) {

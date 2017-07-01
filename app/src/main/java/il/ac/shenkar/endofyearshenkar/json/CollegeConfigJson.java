@@ -14,6 +14,8 @@ public class CollegeConfigJson implements Serializable {
     private String mainTextColor;
     private String aboutText;
     private String aboutImageUrl;
+    private String path;
+    private BuildingsJson building;
 
     public long getId() {
         return id;
@@ -86,4 +88,21 @@ public class CollegeConfigJson implements Serializable {
     public void setAboutImageUrl(String aboutImageUrl) {
         this.aboutImageUrl = aboutImageUrl;
     }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public BuildingsJson getBuilding() {
+        return building;
+    }
+
+    public void setBuilding(BuildingsJson building) {
+        this.building = building;
+    }
+
 }

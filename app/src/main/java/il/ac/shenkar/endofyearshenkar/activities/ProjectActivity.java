@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,9 +25,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -59,64 +55,33 @@ public class ProjectActivity extends ShenkarActivity {
     private String project;
     private Long projectId;
     private ProjectJson mProject;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_project);
-
-        // initialize all the project's views
-        views = new ProjectViewHolder(this);
-
-        project = getIntent().getStringExtra("project");
-        views.txtProjectName.setText(project);
-        String students = getIntent().getStringExtra("students");
-        views.txtStudentName.setText(students);
-
-        projectId = getIntent().getLongExtra("id", 0);
-        playVd = (ImageButton) findViewById(R.id.imageButtonVideo);
-        playSD = (ImageButton) findViewById(R.id.imageButtonSound);
-        playVdGray = (ImageButton) findViewById(R.id.imageButtonVideo2);
-        playSDGray = (ImageButton) findViewById(R.id.imageButtonSound2);
-        // Initialize recycler view
-        RecyclerView rvProjects = (RecyclerView) findViewById(R.id.project_tumbs);
-        rvProjects.setLayoutManager(new LinearLayoutManager(this));
-
-        mProjectImages = new ArrayList<>();
-        adapter = new ProjectGalleryRecyclerAdapter(this, views.imgScreenShot, mProjectImages);
-        rvProjects.setAdapter(adapter);
-        mediaPlayer = new MediaPlayer();
-        playSD.setVisibility(View.GONE);
-        playVd.setVisibility(View.GONE);
-        playVdGray.setVisibility(View.GONE);
-        playSDGray.setVisibility(View.GONE);
-        initialize();
-
-        refreshProjectById();
-        setObjectID();
-    }
-
-
-    private void initialize() {
-        if (StaticCollegeConfigJson.mMainConfig != null) {
-            new DownloadImageTask((ImageView) findViewById(R.id.toolbaricon)).execute(StaticCollegeConfigJson.mMainConfig.getLogoUrl());
-            TextView ProjectName_Headline = (TextView) findViewById(R.id.txtProjectName);
-            ProjectName_Headline.setTextColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getMainTextColor()));
-
-            TextView StudentName_Headline = (TextView) findViewById(R.id.txtStudentName);
-            StudentName_Headline.setTextColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getMainTextColor()));
-
-            LinearLayout LLayout = (LinearLayout) findViewById(R.id.LinarProject);
-            LLayout.setBackgroundColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getSecondaryColor()));
-
+    private ImageButton btnShare;
+    private ImageButton btnLike;
+    private ProgressDialog dialog;
+    MediaPlayer.OnPreparedListener preparedListenerPlayer = new MediaPlayer.OnPreparedListener() {
+        @Override
+        public void onPrepared(MediaPlayer mp) {
+            System.out.println("Liron onPrepared");
+            if (dialog != null && dialog.isShowing()) {
+                dialog.dismiss();
+            }
+            mediaPlayer.start();
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        refreshProjectById();
-    }
+    };
+    private View.OnClickListener LikeProject = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // TODO: implement share project
+            Toast.makeText(ProjectActivity.this, "הוסף למועדפים", Toast.LENGTH_LONG).show();
+            MyRouteActivity.addProjectId(ProjectActivity.this, projectId);
+        }
+    };
+    private View.OnClickListener shareProject = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            shareVideo();
+        }
+    };
 
 /*
     public void refreshMedia() {
@@ -261,6 +226,74 @@ public class ProjectActivity extends ShenkarActivity {
     }*/
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_project);
+
+
+        // initialize all the project's views
+        views = new ProjectViewHolder(this);
+
+        project = getIntent().getStringExtra("project");
+        views.txtProjectName.setText(project);
+        String students = getIntent().getStringExtra("students");
+        System.out.println("Liron students =" + students);
+        views.txtStudentName.setText(students);
+
+        projectId = getIntent().getLongExtra("id", 0);
+        playVd = (ImageButton) findViewById(R.id.imageButtonVideo);
+        playSD = (ImageButton) findViewById(R.id.imageButtonSound);
+        playVdGray = (ImageButton) findViewById(R.id.imageButtonVideo2);
+        playSDGray = (ImageButton) findViewById(R.id.imageButtonSound2);
+        btnLike = (ImageButton) findViewById(R.id.btnLike);
+        btnLike.setOnClickListener(LikeProject);
+
+
+        btnShare = (ImageButton) findViewById(R.id.btnShare);
+        btnShare.setOnClickListener(shareProject);
+        // Initialize recycler view
+        RecyclerView rvProjects = (RecyclerView) findViewById(R.id.project_tumbs);
+        rvProjects.setLayoutManager(new LinearLayoutManager(this));
+
+        mProjectImages = new ArrayList<>();
+        adapter = new ProjectGalleryRecyclerAdapter(this, views.imgScreenShot, mProjectImages);
+        rvProjects.setAdapter(adapter);
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnPreparedListener(preparedListenerPlayer);
+
+
+        playSD.setVisibility(View.GONE);
+        playVd.setVisibility(View.GONE);
+        playVdGray.setVisibility(View.GONE);
+        playSDGray.setVisibility(View.GONE);
+        initialize();
+
+        refreshProjectById();
+        setObjectID();
+    }
+
+    private void initialize() {
+        if (StaticCollegeConfigJson.mMainConfig != null) {
+            new DownloadImageTask((ImageView) findViewById(R.id.toolbaricon)).execute(StaticCollegeConfigJson.mMainConfig.getLogoUrl());
+            TextView ProjectName_Headline = (TextView) findViewById(R.id.txtProjectName);
+            ProjectName_Headline.setTextColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getMainTextColor()));
+
+            TextView StudentName_Headline = (TextView) findViewById(R.id.txtStudentName);
+            StudentName_Headline.setTextColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getMainTextColor()));
+
+            LinearLayout LLayout = (LinearLayout) findViewById(R.id.LinarProject);
+            LLayout.setBackgroundColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getSecondaryColor()));
+
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshProjectById();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
 
@@ -281,7 +314,7 @@ public class ProjectActivity extends ShenkarActivity {
         for (String name : names) {
             namesStr += name + " ";
         }
-
+        System.out.println("Liron namesStr =" + namesStr);
         views.txtStudentName.setText(namesStr);
 
         views.txtProjectDesc.setText(mProject.getDescription());
@@ -328,28 +361,25 @@ public class ProjectActivity extends ShenkarActivity {
                     dialogButtonPlay.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            //  String url = "http://programmerguru.com/android-tutorial/wp-content/uploads/2013/04/hosannatelugu.mp3";
-                            String url = mProject.getSoundUrl();
+
+
+                            if (dialog != null && dialog.isShowing()) {
+                                dialog.dismiss();
+                                dialog = null;
+                            }
+
+                            dialog = ProgressDialog.show(ProjectActivity.this, "", "Loading.Please wait...", true);
+                            System.out.println("Liron setOnClickListener");
+
                             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                             try {
-                                mediaPlayer.setDataSource(url);
-                            } catch (IllegalArgumentException e) {
+                                mediaPlayer.setDataSource(mProject.getSoundUrl());
+                                mediaPlayer.prepareAsync();
 
-                            } catch (SecurityException e) {
-
-                            } catch (IllegalStateException e) {
-
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                            } catch (Exception e) {
                             }
-                            try {
-                                mediaPlayer.prepare();
-                            } catch (IllegalStateException e) {
 
-                            } catch (IOException e) {
 
-                            }
-                            mediaPlayer.start();
                         }
                     });
                     ImageView dialogButtonStop = (ImageView) dialogT.findViewById(R.id.imageButtonStop);
@@ -357,7 +387,7 @@ public class ProjectActivity extends ShenkarActivity {
                     dialogButtonStop.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            mediaPlayer.stop();
+                            mediaPlayer.reset();
                         }
                     });
                     dialogT.show();
@@ -413,6 +443,7 @@ public class ProjectActivity extends ShenkarActivity {
                 mProgressDialog.dismiss();
                 if (project != null) {
                     mProject = project;
+
                     //TODO may be here add to static list
                     refreshProjectData();
                 }
@@ -423,21 +454,64 @@ public class ProjectActivity extends ShenkarActivity {
 
     public void shareProject(View v) {
 
-        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-        Uri screenshotUri = Uri.parse("android.resource://il.ac.shenkar.showshenkar.endofyearshenkar.activities/*");
-        try {
-            InputStream stream = getContentResolver().openInputStream(screenshotUri);
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        sharingIntent.setType("image/jpeg");
-        sharingIntent.putExtra(Intent.EXTRA_STREAM, screenshotUri);
-        startActivity(Intent.createChooser(sharingIntent, "Share Project Using"));
+//        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+//        Uri screenshotUri = Uri.parse("android.resource://il.ac.shenkar.showshenkar.endofyearshenkar.activities/*");
+//        try {
+//            InputStream stream = getContentResolver().openInputStream(screenshotUri);
+//        } catch (FileNotFoundException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//        sharingIntent.setType("image/jpeg");
+//        sharingIntent.putExtra(Intent.EXTRA_STREAM, screenshotUri);
+//        startActivity(Intent.createChooser(sharingIntent, "Share Project Using"));
+
+        shareVideo();
+
+
         // TODO: implement share project
         Toast.makeText(this, "שתף פרויקט", Toast.LENGTH_LONG).show();
-        MyRouteActivity.addProjectId(this, projectId);
     }
+
+
+    private void shareVideo() {
+
+
+        if (mProject.getVideoUrl() == null) {
+
+            return;
+        }
+        String urlYoutube = "https://www.youtube.com/watch?v=" + mProject.getVideoUrl();
+        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, urlYoutube);
+        startActivity(Intent.createChooser(shareIntent, "Share via"));
+
+//        ShareVideo shareVideo = new ShareVideo.Builder().
+//                setLocalUrl(Uri.parse(mProject.getVideoUrl())).build();
+//        ShareContent shareContent = new ShareMediaContent.Builder()
+//                .addMedium(shareVideo).build();
+
+//        ShareLinkContent linkContent = new ShareLinkContent.Builder().setContentUrl(Uri.parse(mProject.getVideoUrl()))
+//                .setQuote("Test")
+//              .build();
+//
+//
+//        ShareDialog shareDialog = new ShareDialog(this);
+//        shareDialog.show(linkContent, ShareDialog.Mode.AUTOMATIC);
+
+    }
+
+    private void sharePhotos() {
+
+
+//        for(String mProjectImage : mProjectImages) {
+//
+//            ShareLi sharePhoto = new SharePhoto.Builder().
+//        }
+    }
+
+
  /*
     public void refresh() {
         final ProjectApi projectApi = new ProjectApi.Builder(
@@ -523,11 +597,8 @@ public class ProjectActivity extends ShenkarActivity {
     void setObjectID() {
         this.objectType = "project";
         this.objectId = projectId;
-        System.out.println("Liron showLocation projectId =" + projectId);
     }
     public void showLocation(View v) {
-
-        System.out.println("Liron showLocation ");
         Intent i = new Intent(this, MapActivity.class);
         i.putExtra("objectId", projectId);
         i.putExtra("objectType", "project");

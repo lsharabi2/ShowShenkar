@@ -11,6 +11,8 @@ public class DepartmentJson implements Serializable {
     private String largeImageUrl;
     private String locationDescription;
     private LocationJson location;
+    private String path;
+    private BuildingsJson building;
 
     public long getId() {
         return id;
@@ -59,4 +61,21 @@ public class DepartmentJson implements Serializable {
     public void setLocation(LocationJson location) {
         this.location = location;
     }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public BuildingsJson getBuilding() {
+        return building;
+    }
+
+    public void setBuilding(BuildingsJson building) {
+        this.building = building;
+    }
 }
+

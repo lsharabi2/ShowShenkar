@@ -17,7 +17,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/sound" />
+            android:src="@drawable/play" />
 
         <il.ac.shenkar.endofyearshenkar.utils.AlefTextView
             android:id="@+id/textView"

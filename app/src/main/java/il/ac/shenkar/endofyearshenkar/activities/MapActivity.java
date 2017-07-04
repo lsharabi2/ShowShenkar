@@ -15,6 +15,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.TileOverlayOptions;
@@ -137,7 +138,7 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
         double lat = locationJson.getLat();
         double lng = locationJson.getLng();
         LatLng location = new LatLng(lat, lng);
-        mMap.addMarker(new MarkerOptions().position(location).title(project.getName()));
+        mMap.addMarker(new MarkerOptions().position(location).title(project.getName()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
 
 
         //TODO check if no location in the project

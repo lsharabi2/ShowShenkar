@@ -109,11 +109,11 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
         String strUrl = "";
         for (DepartmentJson departmentJson : deparment) {
             if (departmentJson.getId() == departmentId) {
-                LocationJson locationJson = departmentJson.getLocation();
-                double lat = locationJson.getLat();
-                double lng = locationJson.getLng();
-                LatLng location = new LatLng(lat, lng);
-                SetMapByDepartmentName(departmentJson.getName(), location);
+//                LocationJson locationJson = departmentJson.getLocation();
+//                double lat = locationJson.getLat();
+//                double lng = locationJson.getLng();
+//                LatLng location = new LatLng(lat, lng);
+                SetMapByDepartmentName(departmentJson);
                 strUrl = departmentJson.getImageUrl();
                 return strUrl;
                 //   mMap.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater(),departmentJson.getImageUrl()));
@@ -148,7 +148,7 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
      *   Set General Map
      * */
     public void SetGeneralMap(){
-        SetMapByDepartmentName("שנקר", SHENKAR);
+        SetMapByDepartmentName(null);
         mMap.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater(),""));
     }
 
@@ -266,90 +266,40 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
         mMap.addMarker(new MarkerOptions().position(location).title(text));
     }
 
-    private void SetMapByDepartmentName(String department, LatLng location) {
-        String path = null;
-        String building = null;
-        switch (department) {
-            case "עיצוב תכשיטים": {
-                path = "Mitchle/3";
-                building = "Mitchle";
-                break;
-            }
-            case "תואר שני בעיצוב": {
-                path = "Mitchle/7";
-                building = "Mitchle";
-                //לרחבת הכניסה של בניין פרניק
-                break;
-            }
-            case "עיצוב תעשייתי": {
-                path = "Mitchle/4";
-                building = "Mitchle";
-                break;
-            }
-            case "תקשורת חזותית": {
-                path = "Mitchle/6";
-                building = "Mitchle";
-                //path = "Mitchle/5";
-                break;
-            }
-            case "עיצוב פנים מבנה וסביבה": {
-                path = "Mitchle/5";
-                building = "Mitchle";
-                break;
-            }
-            case "עיצוב טקסטיל": {
+    private void SetMapByDepartmentName(DepartmentJson departmentJson) {
+        LatLng location;
+        String department = "";
+        String path = "";
+        String building = "";
+        LatLng locationBuild;
+        long zoom;
+        if (departmentJson == null) { // general shenkar
+            LocationJson locationJson = StaticCollegeConfigJson.mMainConfig.getBuilding().getLocation();
+            path = StaticCollegeConfigJson.mMainConfig.getPath();
+            double lat = locationJson.getLat();
+            double lng = locationJson.getLng();
+            location = new LatLng(lat, lng);
+            locationBuild = location;
 
-                path = "Pernik/-1";
-                building = "Pernik";
-                break;
-            }
-            case "אמנות רב תחומית": {
-                path = "Mitchle/7";
-                building = "Mitchle";
-                // בבנין עלית ההיסטורי
-                break;
-            }
-            case "הנדסת תוכנה": {
-                path = "Pernik/2";
-                building = "Pernik";
-                // Shenkar.ac.il says Mitchle
-                break;
-            }
-            case "עיצוב אופנה": {
-                path = "Pernik/4";
-                building = "Pernik";
-                //  path = "Permik/3";
-                break;
-            }
-            case "שנקר": {
-                path = "Anna";
-                building = "Shenkar";
-                break;
-            }
-            default:
-                path = "Anna";
-                building = "Shenkar";
-                break;
+            zoom = StaticCollegeConfigJson.mMainConfig.getBuilding().getZoom();
+            // SHENKAR
+        } else {
+            path = departmentJson.getPath();
+            building = departmentJson.getBuilding().getLocationDescription() + departmentJson.getName();
+            LocationJson buldingLocation = departmentJson.getBuilding().getLocation();
+
+            double latBuild = buldingLocation.getLat();
+            double lngBild = buldingLocation.getLng();
+            locationBuild = new LatLng(latBuild, lngBild);
+
+            double lat = departmentJson.getLocation().getLat();
+            double lng = departmentJson.getLocation().getLng();
+            location = new LatLng(lat, lng);
+            zoom = departmentJson.getBuilding().getZoom();
         }
 
-        switch (building){
-            case "Pernik" :{
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(PERNIK, 18));
-                AddMarker(location, department + " -  בניין פרניק");
-            break;
-            }
-            case "Mitchle" :{
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(MITSHLE, 18));
-                AddMarker(location, department + " - בניין מיטשל");
-                break;
-            }
-            case "Shenkar" :
-            default:{
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(SHENKAR,18));
-                AddMarker(location, department);
-                break;
-            }
-        }
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationBuild, zoom));
+        AddMarker(location, building);
 
         setUpMap(path);
     }

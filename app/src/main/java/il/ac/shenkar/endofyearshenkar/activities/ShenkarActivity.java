@@ -70,6 +70,7 @@ public abstract class ShenkarActivity extends AppCompatActivity {
 //        i.putExtra("objectId", "general");
 //        i.putExtra("objectType", "general");
         startActivity(i);
+
     }
 
     /*

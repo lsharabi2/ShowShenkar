@@ -292,6 +292,7 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
 
             //Start details activity
             mContext.startActivity(intent);
+
         }
     }
 

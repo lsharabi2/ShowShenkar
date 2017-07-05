@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import il.ac.shenkar.endofyearshenkar.R;
+import il.ac.shenkar.endofyearshenkar.json.LocationJson;
 import il.ac.shenkar.endofyearshenkar.utils.PermissionUtils;
 
 
@@ -52,6 +53,7 @@ public class ProjectLocationMap extends ShenkarActivity implements OnMapReadyCal
     private GoogleMap projectMap;
     private Location mLastLocation;
     private GroundOverlay mGroundOverlay;
+    private LocationJson college_location;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -95,8 +97,9 @@ public class ProjectLocationMap extends ShenkarActivity implements OnMapReadyCal
         projectMap = googleMap;
 
         enableMyLocation();
-
-        projectMap.moveCamera(CameraUpdateFactory.newLatLngZoom(SHENKAR, 18));
+        college_location = StaticCollegeConfigJson.mMainConfig.getBuilding().getLocation();
+        LatLng latLng = new LatLng(college_location.getLat(), college_location.getLng());
+        projectMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, StaticCollegeConfigJson.mMainConfig.getBuilding().getZoom()));
         //set map as static
 
         mImages.clear();
@@ -104,7 +107,7 @@ public class ProjectLocationMap extends ShenkarActivity implements OnMapReadyCal
 
         mGroundOverlay = projectMap.addGroundOverlay(new GroundOverlayOptions()
                 .image(mImages.get(0))
-                .position(SHENKAR, 190f, 150f));
+                .position(latLng, 190f, 150f));
 
         if(projectId == 5085604337418240L) { // design-MDes-curriculum
             projectMap.addMarker(new MarkerOptions().position(PERNIK).title("Pernik").snippet("Design MDes curriculum")

@@ -156,6 +156,7 @@ public class MainActivity extends ShenkarActivity {
 
                 //Start details activity
                 startActivity(intent);
+
             }
         });
 
@@ -172,18 +173,21 @@ public class MainActivity extends ShenkarActivity {
         Intent intent = new Intent(this, RoutesActivity.class);
         //   intent.putExtra("main_config", mMainConfig);
         startActivity(intent);
+
     }
 
     public void openMyRouteActivity(View v) {
         Intent intent = new Intent(this, MyRouteActivity.class);
         //  intent.putExtra("main_config", mMainConfig);
         startActivity(intent);
+
     }
 
     public void openGeneralActivity(View v) {
         Intent intent = new Intent(this, GeneralActivity.class);
         //   intent.putExtra("main_config", mMainConfig);
         startActivity(intent);
+
     }
 
 
@@ -201,5 +205,12 @@ public class MainActivity extends ShenkarActivity {
         if (mRequestQueue != null) {
             mRequestQueue.cancelAll(TAG);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        System.out.println("Liron");
+        System.exit(0);
     }
 }

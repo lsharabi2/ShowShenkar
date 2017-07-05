@@ -15,7 +15,6 @@ public class BroadcastReceiverClass extends android.content.BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         status = NetworkUtil.getConnectivityStatusString(context);
-        System.out.println("Liron broadcastReceiver");
         Toast.makeText(context, status, Toast.LENGTH_LONG).show();
     }
 }

@@ -43,6 +43,8 @@ public class ProjectActivity extends ShenkarActivity {
     private static String TAG = "ProjectActivity";
 
     final Context context = this;
+    boolean isPaused = false;
+    int length = 0;
     private ProjectGalleryRecyclerAdapter adapter;
     private List<String> mProjectImages;
     private RequestQueue mRequestQueue;
@@ -74,12 +76,6 @@ public class ProjectActivity extends ShenkarActivity {
             // TODO: implement share project
             Toast.makeText(ProjectActivity.this, "הוסף למועדפים", Toast.LENGTH_LONG).show();
             MyRouteActivity.addProjectId(ProjectActivity.this, projectId);
-        }
-    };
-    private View.OnClickListener shareProject = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            shareVideo();
         }
     };
 
@@ -224,6 +220,47 @@ public class ProjectActivity extends ShenkarActivity {
             }
         }.execute();
     }*/
+private View.OnClickListener shareProject = new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        shareVideo();
+    }
+};
+    private ImageView dialogButtonPlay;
+    private ImageView imageButtonPause;
+    View.OnClickListener mediaPlayerClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (mediaPlayer.isPlaying()) {
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.dismiss();
+                    dialog = null;
+                }
+                mediaPlayer.pause();
+                dialogButtonPlay.setVisibility(View.VISIBLE);
+                imageButtonPause.setVisibility(View.GONE);
+                length = mediaPlayer.getCurrentPosition();
+                isPaused = true;
+            } else if (isPaused) {
+                dialogButtonPlay.setVisibility(View.GONE);
+                imageButtonPause.setVisibility(View.VISIBLE);
+                mediaPlayer.seekTo(length);
+                mediaPlayer.start();
+            } else if (!isPaused) {
+                dialog = ProgressDialog.show(ProjectActivity.this, "", "Loading.Please wait...", true);
+                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                dialogButtonPlay.setVisibility(View.GONE);
+                imageButtonPause.setVisibility(View.VISIBLE);
+                try {
+                    mediaPlayer.setDataSource(mProject.getSoundUrl());
+                    mediaPlayer.prepareAsync();
+
+                } catch (Exception e) {
+                }
+
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -337,6 +374,7 @@ public class ProjectActivity extends ShenkarActivity {
                     Intent i = new Intent(ProjectActivity.this, YouTubeActivity.class);
                     i.putExtra("url", mProject.getVideoUrl());
                     startActivity(i);
+
                 }
             });
         }
@@ -350,43 +388,28 @@ public class ProjectActivity extends ShenkarActivity {
                 }
             });
         } else {
+
+
             playSD.setVisibility(View.VISIBLE);
             playSD.setOnClickListener(new View.OnClickListener() {
+
                 @Override
                 public void onClick(View v) {
                     final Dialog dialogT = new Dialog(context);
                     dialogT.setContentView(R.layout.custom);
-                    ImageView dialogButtonPlay = (ImageView) dialogT.findViewById(R.id.imageButtonPlay);
+                    dialogButtonPlay = (ImageView) dialogT.findViewById(R.id.imageButtonPlay);
+                    imageButtonPause = (ImageView) dialogT.findViewById(R.id.imageButtonPause);
+                    imageButtonPause.setOnClickListener(mediaPlayerClickListener);
                     // if button is clicked, close the custom dialog
-                    dialogButtonPlay.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-
-                            if (dialog != null && dialog.isShowing()) {
-                                dialog.dismiss();
-                                dialog = null;
-                            }
-
-                            dialog = ProgressDialog.show(ProjectActivity.this, "", "Loading.Please wait...", true);
-                            System.out.println("Liron setOnClickListener");
-
-                            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                            try {
-                                mediaPlayer.setDataSource(mProject.getSoundUrl());
-                                mediaPlayer.prepareAsync();
-
-                            } catch (Exception e) {
-                            }
-
-
-                        }
-                    });
+                    dialogButtonPlay.setOnClickListener(mediaPlayerClickListener);
                     ImageView dialogButtonStop = (ImageView) dialogT.findViewById(R.id.imageButtonStop);
                     // if button is clicked, close the custom dialog
                     dialogButtonStop.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            isPaused = false;
+                            dialogButtonPlay.setVisibility(View.VISIBLE);
+                            imageButtonPause.setVisibility(View.GONE);
                             mediaPlayer.reset();
                         }
                     });
@@ -603,6 +626,7 @@ public class ProjectActivity extends ShenkarActivity {
         i.putExtra("objectId", projectId);
         i.putExtra("objectType", "project");
         startActivity(i);
+
     }
 
     public void sendEmail(View v) {
@@ -650,6 +674,7 @@ public class ProjectActivity extends ShenkarActivity {
                     Intent i = new Intent(ProjectActivity.this, ProjectImageActivity.class);
                     i.putExtra("url", adapter.getCurrentMainImageUrl());
                     startActivity(i);
+
                 }
             });
         }

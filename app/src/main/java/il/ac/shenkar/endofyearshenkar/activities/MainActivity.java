@@ -105,14 +105,15 @@ public class MainActivity extends ShenkarActivity {
         mRequestQueue = Volley.newRequestQueue(this);
         String url = JsonURIs.getConfigCollegeIdUri(JsonURIs.SHENKAR_COLLEGE_ID);
 
-        GsonRequest request = new GsonRequest(url, CollegeConfigJson.class, null,
+        GsonRequest<CollegeConfigJson> request = new GsonRequest<>(url, CollegeConfigJson.class, null,
                 new Response.Listener<CollegeConfigJson>() {
                     @Override
                     public void onResponse(CollegeConfigJson response) {
+                        System.out.println("Liron StaticCollegeConfigJson response =" + response.toString());
                         StaticCollegeConfigJson.mMainConfig = response;
-                        if (StaticCollegeConfigJson.mMainConfig != null) {
+                        //  if (StaticCollegeConfigJson.mMainConfig != null) {
                             update_views(StaticCollegeConfigJson.mMainConfig);
-                        }
+                        //}
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -194,6 +195,7 @@ public class MainActivity extends ShenkarActivity {
     @Override
     public void onResume() {
         super.onResume();
+        System.out.println("Liron onResume gridAdapter.refresh()");
         gridAdapter.refresh();
         String status = NetworkUtil.getConnectivityStatusString(MainActivity.this);
         Toast.makeText(MainActivity.this, status, Toast.LENGTH_LONG).show();
@@ -210,7 +212,6 @@ public class MainActivity extends ShenkarActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        System.out.println("Liron");
         System.exit(0);
     }
 }

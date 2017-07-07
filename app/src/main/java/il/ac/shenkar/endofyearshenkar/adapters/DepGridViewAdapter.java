@@ -108,12 +108,15 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
+                        System.out.println("Liron response = " + response.toString());
                         final List<DepartmentJson> departments = new ArrayList<>();
 
                         for (int i = 0; i < response.length(); i++) {
                             try {
+
                                 departments.add(new Gson().fromJson(response.getString(i), DepartmentJson.class));
                             } catch (JSONException e) {
+                                System.out.println("Liron response catch error " + e.toString());
                                 e.printStackTrace();
                             }
                         }
@@ -135,6 +138,7 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        System.out.println("Liron response catch error " + error.toString());
                         error.printStackTrace();
                         mProgressDialog.dismiss();
                     }

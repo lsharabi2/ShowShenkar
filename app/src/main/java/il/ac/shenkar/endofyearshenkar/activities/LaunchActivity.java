@@ -10,7 +10,7 @@ import il.ac.shenkar.endofyearshenkar.R;
 
 public class LaunchActivity extends Activity {
 
-    private static final int SPLASH_TIMEOUT = 2000;
+    private static final int SPLASH_TIMEOUT = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

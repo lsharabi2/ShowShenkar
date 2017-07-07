@@ -504,26 +504,16 @@ private View.OnClickListener shareProject = new View.OnClickListener() {
 
             return;
         }
-        String urlYoutube = "https://www.youtube.com/watch?v=" + mProject.getVideoUrl();
+        String urlYoutube = " https://shenkar-show-web-new.herokuapp.com/index.html#/projectDetails/" + mProject.getId();  //"https://www.youtube.com/watch?v=" + mProject.getVideoUrl();
         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, urlYoutube);
         startActivity(Intent.createChooser(shareIntent, "Share via"));
 
-//        ShareVideo shareVideo = new ShareVideo.Builder().
-//                setLocalUrl(Uri.parse(mProject.getVideoUrl())).build();
-//        ShareContent shareContent = new ShareMediaContent.Builder()
-//                .addMedium(shareVideo).build();
-
-//        ShareLinkContent linkContent = new ShareLinkContent.Builder().setContentUrl(Uri.parse(mProject.getVideoUrl()))
-//                .setQuote("Test")
-//              .build();
-//
-//
-//        ShareDialog shareDialog = new ShareDialog(this);
-//        shareDialog.show(linkContent, ShareDialog.Mode.AUTOMATIC);
 
     }
+
+    // https://shenkar-show-web-new.herokuapp.com/index.html#/projectDetails/mProject.getId()
 
     private void sharePhotos() {
 

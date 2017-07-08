@@ -314,7 +314,7 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
             public synchronized URL getTileUrl(int x, int y, int zoom) {
                 // The moon tile coordinate system is reversed.  This is not normal.
                 int reversedY = (1 << zoom) - y - 2;
-                String s = String.format(Locale.US, "http://shenkar.xyz/maps/1/" + path + "/%d/%d/%d.png", zoom, x, y);
+                String s = String.format(Locale.US, "http://megastar.co.il/EPSG3857/" + path + "/%d/%d/%d.png", zoom, x, y);  // "http://shenkar.xyz/maps/1/"
                 URL url = null;
                 try {
                     url = new URL(s);
@@ -328,8 +328,6 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
 
         mMap.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider));
     }
-
-
 
     protected void onStart() {
         mGoogleApiClient.connect();

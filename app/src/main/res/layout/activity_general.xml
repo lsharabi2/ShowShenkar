@@ -47,7 +47,6 @@ android:weightSum="1">
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:text=""
-
         android:textColor="@color/black"
         android:textDirection="rtl"
         android:textSize="18dp" />

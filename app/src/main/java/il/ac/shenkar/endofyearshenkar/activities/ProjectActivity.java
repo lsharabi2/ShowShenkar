@@ -504,11 +504,15 @@ private View.OnClickListener shareProject = new View.OnClickListener() {
 
             return;
         }
-        String urlYoutube = " https://shenkar-show-web-new.herokuapp.com/index.html#/projectDetails/" + mProject.getId();  //"https://www.youtube.com/watch?v=" + mProject.getVideoUrl();
+
+
+        String urlYoutube = "זהו פרויקט הגמר שלי אשר עליו עמלתי רבות, אשמח אם תוכלו לשתפו עם אחרים במידה ונהניתם: " + "https://shenkar-show-web-new.herokuapp.com/index.html#/projectDetails/" + mProject.getId();  //"https://www.youtube.com/watch?v=" + mProject.getVideoUrl();
         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, urlYoutube);
+        shareIntent.setType("text/plain");
         startActivity(Intent.createChooser(shareIntent, "Share via"));
+
+        // String Try = "זהו פרויקט הגמר שלי אשר עליו עמלתי רבות, אשמח אם תוכלו לשתפו עם אחרים במידה ונהניתם: ";
 
 
     }

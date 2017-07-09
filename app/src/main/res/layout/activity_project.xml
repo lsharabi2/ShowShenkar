@@ -129,9 +129,18 @@
                 android:layout_marginLeft="5dp"
                 android:layout_weight="1"
                 android:background="@color/shenkarYellow"
-                android:onClick="Like"
-                android:scaleType="fitXY"
-                android:src="@drawable/like" />
+                android:scaleType="fitXY" />
+
+            <!--<ImageButton-->
+            <!--android:id="@+id/btnDislike"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_marginLeft="5dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:background="@color/shenkarYellow"-->
+            <!--android:onClick="Like"-->
+            <!--android:scaleType="fitXY"-->
+            <!--android:src="@drawable/Dislike" />-->
 
 
             <ImageButton

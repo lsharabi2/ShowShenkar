@@ -1,6 +1,5 @@
 package il.ac.shenkar.endofyearshenkar.activities;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -30,16 +29,6 @@ public class MyRouteActivity extends ShenkarActivity {
 
     //  private CollegeConfigJson mMainConfig;
 
-    public static void addProjectId(Context context, Long projectId) {
-        SharedPreferences sharedPref = context.getSharedPreferences(
-                context.getString(R.string.preference_file_key), MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        Set<String> projectIdsStr = new HashSet<>(sharedPref.getStringSet(context.getString(R.string.preference_ids_key), new HashSet<String>()));
-        projectIdsStr.add(Long.toString(projectId));
-
-        editor.putStringSet(context.getString(R.string.preference_ids_key), projectIdsStr);
-        editor.commit();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

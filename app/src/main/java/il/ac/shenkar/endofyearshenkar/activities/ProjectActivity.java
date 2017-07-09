@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -26,6 +27,7 @@ import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -59,6 +61,7 @@ public class ProjectActivity extends ShenkarActivity {
     private ProjectJson mProject;
     private ImageButton btnShare;
     private ImageButton btnLike;
+    private ImageButton btnDisLike;
     private ProgressDialog dialog;
     MediaPlayer.OnPreparedListener preparedListenerPlayer = new MediaPlayer.OnPreparedListener() {
         @Override
@@ -70,16 +73,29 @@ public class ProjectActivity extends ShenkarActivity {
             mediaPlayer.start();
         }
     };
+    private HashSet<String> projectIdsStr;
+    private SharedPreferences.Editor editor;
     private View.OnClickListener LikeProject = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            // TODO: implement share project
-            Toast.makeText(ProjectActivity.this, "הוסף למועדפים", Toast.LENGTH_LONG).show();
-            MyRouteActivity.addProjectId(ProjectActivity.this, projectId);
+            ImageButton btn = (ImageButton) v;
+            String tagBtn = (String) v.getTag();
+            if (tagBtn.equals("1")) { // is liked project, we need to dislike it
+                btn.setTag("0");
+                btn.setImageResource(R.drawable.disliked);
+                removeProjectId(projectId);
+                Toast.makeText(ProjectActivity.this, "הוסר ממועדפים", Toast.LENGTH_LONG).show();
+            } else {
+                btn.setTag("1");
+                btn.setImageResource(R.drawable.like);
+                addProjectId(projectId);
+                Toast.makeText(ProjectActivity.this, "הוסף למועדפים", Toast.LENGTH_LONG).show();
+            }
+
+            //MyRouteActivity.addProjectId(ProjectActivity.this, projectId);
         }
     };
-
-/*
+    /*
     public void refreshMedia() {
         dbhelper = new DBHelper();
         projectApi = dbhelper.getProjectApi();
@@ -262,11 +278,33 @@ private View.OnClickListener shareProject = new View.OnClickListener() {
         }
     };
 
+    private void addProjectId(Long projectId) {
+//        SharedPreferences sharedPref = context.getSharedPreferences(
+//                context.getString(R.string.preference_file_key), MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPref.edit();
+//        Set<String> projectIdsStr = new HashSet<>(sharedPref.getStringSet(context.getString(R.string.preference_ids_key), new HashSet<String>()));
+        projectIdsStr.add(Long.toString(projectId));
+
+        editor.putStringSet(context.getString(R.string.preference_ids_key), projectIdsStr);
+        editor.commit();
+    }
+
+    private void removeProjectId(Long projectId) {
+//        SharedPreferences sharedPref = context.getSharedPreferences(
+//                context.getString(R.string.preference_file_key), MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPref.edit();
+//        Set<String> projectIdsStr = new HashSet<>(sharedPref.getStringSet(context.getString(R.string.preference_ids_key), new HashSet<String>()));
+        projectIdsStr.remove(Long.toString(projectId));
+
+        editor.putStringSet(context.getString(R.string.preference_ids_key), projectIdsStr);
+        editor.commit();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project);
-
+        sharedPrefInitialization();
 
         // initialize all the project's views
         views = new ProjectViewHolder(this);
@@ -283,7 +321,12 @@ private View.OnClickListener shareProject = new View.OnClickListener() {
         playVdGray = (ImageButton) findViewById(R.id.imageButtonVideo2);
         playSDGray = (ImageButton) findViewById(R.id.imageButtonSound2);
         btnLike = (ImageButton) findViewById(R.id.btnLike);
+
+        checkIfLiked();
+        //  btnDisLike = (ImageButton) findViewById(R.id.btnDislike);
+        //btnDisLike.setOnClickListener(DislikeProject);
         btnLike.setOnClickListener(LikeProject);
+
 
 
         btnShare = (ImageButton) findViewById(R.id.btnShare);
@@ -307,6 +350,25 @@ private View.OnClickListener shareProject = new View.OnClickListener() {
 
         refreshProjectById();
         setObjectID();
+    }
+
+    private void checkIfLiked() {
+        for (String projectID : projectIdsStr) {
+            if (projectID.equals(Long.toString(projectId))) {
+                btnLike.setImageResource(R.drawable.like);
+                btnLike.setTag("1"); // 1 is for like pic
+                return;
+            }
+        }
+        btnLike.setImageResource(R.drawable.disliked);
+        btnLike.setTag("0"); // 0 is for dislike pic
+    }
+
+    private void sharedPrefInitialization() {
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                context.getString(R.string.preference_file_key), MODE_PRIVATE);
+        editor = sharedPref.edit();
+        projectIdsStr = new HashSet<>(sharedPref.getStringSet(context.getString(R.string.preference_ids_key), new HashSet<String>()));
     }
 
     private void initialize() {

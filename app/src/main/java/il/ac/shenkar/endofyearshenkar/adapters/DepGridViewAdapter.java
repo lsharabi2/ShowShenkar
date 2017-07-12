@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.StateListDrawable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +35,7 @@ import il.ac.shenkar.endofyearshenkar.json.DepartmentJson;
 import il.ac.shenkar.endofyearshenkar.json.DepartmentJsonStatic;
 import il.ac.shenkar.endofyearshenkar.json.JsonURIs;
 
-public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
+public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> implements SwipeRefreshLayout.OnRefreshListener {
 
     private final RequestQueue requestQueue;
     private final DepartmentDbHelper mDbHelper;
@@ -42,6 +43,7 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
     private int layoutResourceId;
     private List<DepartmentJson> data;
     private ProgressDialog mProgressDialog;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public DepGridViewAdapter(Context context, int layoutResourceId, List<DepartmentJson> data) {
         super(context, layoutResourceId, data);
@@ -103,12 +105,16 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
     public void refresh() {
 
         mProgressDialog = ProgressDialog.show(context, "טוען נתונים", "מעדכן מחלקות", true, true);
-
+        System.out.println("Liron JsonURIs.getDepartmentsByCollegeIdUri(JsonURIs.SHENKAR_COLLEGE_ID) =" + JsonURIs.getDepartmentsByCollegeIdUri(JsonURIs.SHENKAR_COLLEGE_ID));
         JsonArrayRequest req = new JsonArrayRequest(JsonURIs.getDepartmentsByCollegeIdUri(JsonURIs.SHENKAR_COLLEGE_ID),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
                         System.out.println("Liron response = " + response.toString());
+                        if (JsonURIs.server_call_counter == 1) {
+                            JsonURIs.server_call_counter = 0;
+                            System.out.println("Liron succeess!!!");
+                        }
                         final List<DepartmentJson> departments = new ArrayList<>();
 
                         for (int i = 0; i < response.length(); i++) {
@@ -116,7 +122,7 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
 
                                 departments.add(new Gson().fromJson(response.getString(i), DepartmentJson.class));
                             } catch (JSONException e) {
-                                System.out.println("Liron response catch error " + e.toString());
+                                System.out.println("Liron response catch error 1" + e.toString());
                                 e.printStackTrace();
                             }
                         }
@@ -133,12 +139,18 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
                         data.addAll(departments);
                         notifyDataSetChanged();
                         replaceDepartmentsDb(departments);
+                        mSwipeRefreshLayout.setRefreshing(false);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        System.out.println("Liron response catch error " + error.toString());
+                        System.out.println("Liron response catch error 2" + error.toString());
+                        if (JsonURIs.server_call_counter == 0) {
+                            System.out.println("Liron first call" + error.toString());
+                            refresh();
+                            JsonURIs.server_call_counter = 1;
+                        }
                         error.printStackTrace();
                         mProgressDialog.dismiss();
                     }
@@ -153,6 +165,16 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> {
         for (DepartmentJson json : departmentJsons) {
             mDbHelper.insertDepartment(json);
         }
+    }
+
+    public void setSwipeRefreshLayout(SwipeRefreshLayout swipeRefreshLayout) {
+        mSwipeRefreshLayout = swipeRefreshLayout;
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+    }
+
+    @Override
+    public void onRefresh() {
+        refresh();
     }
 
     static class ViewHolder {

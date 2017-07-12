@@ -6,6 +6,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -58,6 +59,7 @@ public class MainActivity extends ShenkarActivity {
         mDepartments = new ArrayList<>();
         gridView = (GridView) findViewById(R.id.gridView);
         gridAdapter = new DepGridViewAdapter(this, R.layout.dep_grid_item_layout, mDepartments);
+        gridAdapter.setSwipeRefreshLayout((SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout));
         gridView.setAdapter(gridAdapter);
 
 //        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mlayout"
     android:layout_width="match_parent"
@@ -21,15 +21,16 @@
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/footer"
+        android:layout_below="@+id/logo_text">
 
     <GridView
         android:id="@+id/gridView"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_margin="5dp"
-        android:layout_weight="9"
         android:clickable="true"
         android:columnWidth="100dp"
         android:drawSelectorOnTop="true"
@@ -42,17 +43,21 @@
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <RelativeLayout
+
+        android:id="@+id/footer"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:background="@color/grey">
 
         <ImageButton
+
             android:id="@+id/btnMyRoutes"
             android:layout_width="55dp"
             android:layout_height="55dp"
             android:layout_centerInParent="true"
-            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
             android:background="@null"
             android:onClick="openMyRouteActivity"
             android:scaleType="fitXY"
@@ -64,8 +69,9 @@
             android:layout_height="55dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
+            android:layout_marginBottom="10dp"
             android:layout_marginLeft="20dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:background="@null"
             android:onClick="openGeneralActivity"
             android:scaleType="fitXY"
@@ -77,8 +83,9 @@
             android:layout_height="55dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:layout_marginBottom="10dp"
             android:layout_marginRight="20dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:background="@null"
             android:onClick="openRoutesActivity"
             android:scaleType="fitXY"
@@ -86,4 +93,4 @@
 
     </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>

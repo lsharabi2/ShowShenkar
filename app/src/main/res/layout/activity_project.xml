@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="il.ac.shenkar.endofyearshenkar.activities.ProjectActivity">
+    tools:context="il.ac.shenkar.endofyearshenkarproject.activities.ProjectActivity">
 
     <LinearLayout
         android:id="@+id/LinarProject"
@@ -22,7 +22,7 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <il.ac.shenkar.endofyearshenkar.utils.BoldAlefTextView
+            <il.ac.shenkar.endofyearshenkarproject.utils.BoldAlefTextView
                 android:id="@+id/txtProjectName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
                 android:textSize="20dp"
                 android:textStyle="bold" />
 
-            <il.ac.shenkar.endofyearshenkar.utils.BoldAlefTextView
+            <il.ac.shenkar.endofyearshenkarproject.utils.BoldAlefTextView
                 android:id="@+id/txtStudentName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -160,7 +160,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <il.ac.shenkar.endofyearshenkar.utils.AlefTextView
+            <il.ac.shenkar.endofyearshenkarproject.utils.AlefTextView
                 android:id="@+id/txtProjectDesc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

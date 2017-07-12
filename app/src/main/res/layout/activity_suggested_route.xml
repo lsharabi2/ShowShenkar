@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="il.ac.shenkar.endofyearshenkar.activities.SuggestedRouteActivity">
+    tools:context="il.ac.shenkar.endofyearshenkarproject.activities.SuggestedRouteActivity">
 
-    <il.ac.shenkar.endofyearshenkar.utils.BoldAlefTextView
+    <il.ac.shenkar.endofyearshenkarproject.utils.BoldAlefTextView
         android:id="@+id/SuggestedTitle"
         android:layout_width="match_parent"
         android:layout_height="50dp"

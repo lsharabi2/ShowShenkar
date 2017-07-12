@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="il.ac.shenkar.endofyearshenkar.activities.GeneralActivity">
+    tools:context="il.ac.shenkar.endofyearshenkarproject.activities.GeneralActivity">
 
 <LinearLayout
 android:layout_width="match_parent"
@@ -21,7 +21,7 @@ android:weightSum="1">
     android:gravity="center"
     android:orientation="vertical">
 
-    <il.ac.shenkar.endofyearshenkar.utils.BoldAlefTextView
+        <il.ac.shenkar.endofyearshenkarproject.utils.BoldAlefTextView
         android:id="@+id/generalHeadline"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -41,7 +41,7 @@ android:weightSum="1">
     android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <il.ac.shenkar.endofyearshenkar.utils.AlefTextView
+        <il.ac.shenkar.endofyearshenkarproject.utils.AlefTextView
         android:id="@+id/txtGeneralInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="il.ac.shenkar.endofyearshenkar.activities.ProjectLocationMap">
+    tools:context="il.ac.shenkar.endofyearshenkarproject.activities.ProjectLocationMap">
 
     <fragment
         android:id="@+id/department_map"
@@ -17,13 +17,13 @@
         android:layout_below="@+id/textView_projectLocationMap_projectName" />
 
     <TextView
+        android:id="@+id/textView_projectLocationMap_projectName"
         android:layout_width="wrap_content"
         android:layout_height="36dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/project_name"
-        android:id="@+id/textView_projectLocationMap_projectName"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:text="@string/project_name"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:typeface="serif" />
 </RelativeLayout>
 

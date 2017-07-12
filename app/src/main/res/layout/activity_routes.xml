@@ -8,7 +8,7 @@
     android:orientation="vertical"
     tools:context="il.ac.shenkar.showshenkar.activitiesar.showshenkar.RoutesActivity">
 
-    <il.ac.shenkar.endofyearshenkar.utils.BoldAlefTextView
+    <il.ac.shenkar.endofyearshenkarproject.utils.BoldAlefTextView
         android:id="@+id/RoutesHeadline"
         android:layout_width="match_parent"
         android:layout_height="50dp"

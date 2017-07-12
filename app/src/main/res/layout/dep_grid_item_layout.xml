@@ -14,7 +14,7 @@
         android:layout_height="90dp"
         android:scaleType="fitXY"/>
 
-    <il.ac.shenkar.endofyearshenkar.utils.AlefTextView
+    <il.ac.shenkar.endofyearshenkarproject.utils.AlefTextView
         android:id="@+id/text"
         android:layout_width="fill_parent"
         android:layout_height="40dp"

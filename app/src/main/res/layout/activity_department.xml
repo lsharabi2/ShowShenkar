@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="il.ac.shenkar.endofyearshenkar.activities.DepartmentActivity">
+    tools:context="il.ac.shenkar.endofyearshenkarproject.activities.DepartmentActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,7 +13,7 @@
         android:background="@color/shenkarYellow"
         android:orientation="vertical">
 
-        <il.ac.shenkar.endofyearshenkar.utils.BoldAlefTextView
+        <il.ac.shenkar.endofyearshenkarproject.utils.BoldAlefTextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
             android:textSize="20dp"
             android:textStyle="bold" />
 
-        <il.ac.shenkar.endofyearshenkar.utils.BoldAlefTextView
+        <il.ac.shenkar.endofyearshenkarproject.utils.BoldAlefTextView
             android:id="@+id/location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="il.ac.shenkar.endofyearshenkar.activities.MyRouteActivity">
+    tools:context="il.ac.shenkar.endofyearshenkarproject.activities.MyRouteActivity">
 
-    <il.ac.shenkar.endofyearshenkar.utils.BoldAlefTextView
+    <il.ac.shenkar.endofyearshenkarproject.utils.BoldAlefTextView
         android:id="@+id/MyRouteHeadline"
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -28,7 +28,7 @@
         android:layoutDirection="rtl"
         android:visibility="visible" />
 
-    <il.ac.shenkar.endofyearshenkar.utils.AlefTextView
+    <il.ac.shenkar.endofyearshenkarproject.utils.AlefTextView
         android:id="@+id/no_projects"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

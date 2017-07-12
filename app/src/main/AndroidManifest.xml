@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="il.ac.shenkar.endofyearshenkar">
+    package="il.ac.shenkar.endofyearshenkarproject">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -36,22 +36,22 @@
             android:exported="true" />
 
         <!-- <activity android:name=".activities.AudioActivity" /> -->
-        <activity android:name="il.ac.shenkar.endofyearshenkar.activities.DepartmentActivity" />
+        <activity android:name="il.ac.shenkar.endofyearshenkarproject.activities.DepartmentActivity" />
         <!-- <activity android:name=".activities.VideoActivity" /> -->
-        <activity android:name="il.ac.shenkar.endofyearshenkar.activities.MainActivity">
+        <activity android:name="il.ac.shenkar.endofyearshenkarproject.activities.MainActivity">
         </activity>
-        <activity android:name="il.ac.shenkar.endofyearshenkar.activities.ProjectActivity" />
-        <activity android:name="il.ac.shenkar.endofyearshenkar.activities.RoutesActivity" />
+        <activity android:name="il.ac.shenkar.endofyearshenkarproject.activities.ProjectActivity" />
+        <activity android:name="il.ac.shenkar.endofyearshenkarproject.activities.RoutesActivity" />
         <activity
-            android:name="il.ac.shenkar.endofyearshenkar.activities.MapActivity"
+            android:name="il.ac.shenkar.endofyearshenkarproject.activities.MapActivity"
             android:label="@string/department"
             android:supportsRtl="true"
             android:theme="@style/AppTheme" />
-        <activity android:name="il.ac.shenkar.endofyearshenkar.activities.MyRouteActivity" />
-        <activity android:name="il.ac.shenkar.endofyearshenkar.activities.YouTubeActivity" />
-        <activity android:name="il.ac.shenkar.endofyearshenkar.activities.GeneralActivity" />
+        <activity android:name="il.ac.shenkar.endofyearshenkarproject.activities.MyRouteActivity" />
+        <activity android:name="il.ac.shenkar.endofyearshenkarproject.activities.YouTubeActivity" />
+        <activity android:name="il.ac.shenkar.endofyearshenkarproject.activities.GeneralActivity" />
         <activity
-            android:name="il.ac.shenkar.endofyearshenkar.activities.ProjectLocationMap"
+            android:name="il.ac.shenkar.endofyearshenkarproject.activities.ProjectLocationMap"
             android:label="@string/project_location"
             android:supportsRtl="true"
             android:theme="@style/AppTheme" />
@@ -69,9 +69,9 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
-        <activity android:name="il.ac.shenkar.endofyearshenkar.activities.SuggestedRouteActivity" />
-        <activity android:name="il.ac.shenkar.endofyearshenkar.activities.ProjectImageActivity" />
-        <activity android:name="il.ac.shenkar.endofyearshenkar.activities.LaunchActivity">
+        <activity android:name="il.ac.shenkar.endofyearshenkarproject.activities.SuggestedRouteActivity" />
+        <activity android:name="il.ac.shenkar.endofyearshenkarproject.activities.ProjectImageActivity" />
+        <activity android:name="il.ac.shenkar.endofyearshenkarproject.activities.LaunchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -79,7 +79,7 @@
         </activity>
 
 
-        <receiver android:name=".activities.BroadcastReceiverClass">
+        <receiver android:name="il.ac.shenkar.endofyearshenkarproject.activities.BroadcastReceiverClass">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />

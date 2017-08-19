@@ -3,11 +3,15 @@ package il.ac.shenkar.endofyearshenkarproject.activities;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.RequestFuture;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -26,11 +30,16 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import il.ac.shenkar.endofyearshenkarproject.R;
 import il.ac.shenkar.endofyearshenkarproject.adapters.PopupAdapter;
 import il.ac.shenkar.endofyearshenkarproject.json.DepartmentJson;
 import il.ac.shenkar.endofyearshenkarproject.json.DepartmentJsonStatic;
+import il.ac.shenkar.endofyearshenkarproject.json.GsonRequest;
+import il.ac.shenkar.endofyearshenkarproject.json.JsonURIs;
 import il.ac.shenkar.endofyearshenkarproject.json.LocationJson;
 import il.ac.shenkar.endofyearshenkarproject.json.ProjectJson;
 import il.ac.shenkar.endofyearshenkarproject.json.ProjectJsonStatic;
@@ -94,7 +103,13 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
         mMap = googleMap;
         enableMyLocation();
         if (objectType.equals("project")) {
-            SetProjectMap(objectId);
+            List<ProjectJson> projects = ProjectJsonStatic.getProjectJsonList();
+            if (!projects.isEmpty()) {
+                SetProjectMapFromList(objectId);
+            } else {
+                getProjectByID(objectId);
+            }
+
         } else if (objectType.equals("department")) {
             String strUrl = SetDepartmentMap(objectId);
 
@@ -103,6 +118,59 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
             SetGeneralMap();
         }
     }
+
+    private void getProjectByID(final Long projectId) {
+
+        new AsyncTask<Void, Void, ProjectJson>() {
+            @Override
+            protected ProjectJson doInBackground(Void... params) {
+                ProjectJson project = getProjectById(projectId);
+                return project;
+            }
+
+            @Override
+            protected void onPostExecute(ProjectJson project) {
+                //show complition in UI
+                //fill grid view with data
+                if (project != null) {
+
+                    SetProjectMap(project);
+                    //ProjectJsonStatic.getProjectJsonList().clear();
+                    //  ProjectJsonStatic.setProjectJsonList(projects);
+                }
+            }
+        }.execute();
+
+    }
+
+
+    public ProjectJson getProjectById(long projectId) {
+        try {
+            final String url = JsonURIs.getProjectByIdUri(projectId);
+
+            RequestFuture<ProjectJson> future = RequestFuture.newFuture();
+
+            GsonRequest req = new GsonRequest(url, ProjectJson.class, null, future, future);
+
+            RequestQueue tempQueue = Volley.newRequestQueue(getBaseContext());
+
+            // Add the request to the RequestQueue.
+            tempQueue.add(req);
+
+            ProjectJson response = future.get(10, TimeUnit.SECONDS);
+            return response;
+        } catch (InterruptedException e) {
+            //    Log.d(TAG, "interrupted error");
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            //    Log.d(TAG, "execution error");
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     private String SetDepartmentMap(final Long departmentId) {
         List<DepartmentJson> deparment = DepartmentJsonStatic.getDepartmentJsonList();
@@ -122,7 +190,23 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
         return strUrl;
     }
 
-    private void SetProjectMap(final Long projectId) {
+
+    private void SetProjectMap(ProjectJson project) {
+
+        SetDepartmentMap(project.getDepartmentId());
+        AddMarkerByLocationContent(project);
+
+
+//        List<ProjectJson> projectList = ProjectJsonStatic.getProjectJsonList();
+//        for (ProjectJson project : projectList) {
+//            if (project.getId() == projectId) {
+//                SetDepartmentMap(project.getDepartmentId());
+//                AddMarkerByLocationContent(project);
+//            }
+//        }
+    }
+
+    private void SetProjectMapFromList(final Long projectId) {
         List<ProjectJson> projectList = ProjectJsonStatic.getProjectJsonList();
         for (ProjectJson project : projectList) {
             if (project.getId() == projectId) {

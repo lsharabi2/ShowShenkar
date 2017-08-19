@@ -1,8 +1,10 @@
 package il.ac.shenkar.endofyearshenkarproject.activities;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -214,6 +216,16 @@ public class MainActivity extends ShenkarActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        killBroadcast();
         System.exit(0);
+    }
+
+
+    private void killBroadcast() {
+        PackageManager pm = MainActivity.this.getPackageManager();
+        ComponentName componentName = new ComponentName(MainActivity.this, BroadcastReceiverClass.class);
+        //  int status = getApplicationContext().getPackageManager().getComponentEnabledSetting(componentName);
+        pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP);
     }
 }

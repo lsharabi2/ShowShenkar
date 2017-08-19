@@ -100,19 +100,22 @@ public abstract class ShenkarActivity extends AppCompatActivity {
 //                String locationId;
                 //DBHelper helper = new DBHelper();
                 try {
-                    String oType = result.getContents().split(";")[1];
 
-                    Long oID = Long.valueOf(result.getContents().split(";")[0]);
+                    String[] parts = result.getContents().split(";");
+                    if (parts.length == 2) {
 
-                    //rContent = Long.valueOf(result.getContents());
-                    //locationId = result.getContents();
+                        String oType = parts[1];
+                        Long oID = Long.valueOf(parts[0]);
 
-                    Intent to_mapActivity = new Intent(this, MapActivity.class);
-                    to_mapActivity.putExtra("objectId",oID);
-                    to_mapActivity.putExtra("objectType", oType);
+                        //rContent = Long.valueOf(result.getContents());
+                        //locationId = result.getContents();
 
-                    startActivity(to_mapActivity);
+                        Intent to_mapActivity = new Intent(this, MapActivity.class);
+                        to_mapActivity.putExtra("objectId", oID);
+                        to_mapActivity.putExtra("objectType", oType);
 
+                        startActivity(to_mapActivity);
+                    }
 
                 } catch (NumberFormatException e){
 

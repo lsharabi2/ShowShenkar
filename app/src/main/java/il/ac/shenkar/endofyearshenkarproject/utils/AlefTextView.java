@@ -5,6 +5,9 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
+/**
+ * Text font for content
+ */
 public class AlefTextView extends TextView {
 
     public AlefTextView(Context context) {

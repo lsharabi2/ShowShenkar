@@ -5,6 +5,9 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
+/**
+ * Text font for titles
+ */
 public class BoldAlefTextView extends TextView {
 
     public BoldAlefTextView(Context context) {

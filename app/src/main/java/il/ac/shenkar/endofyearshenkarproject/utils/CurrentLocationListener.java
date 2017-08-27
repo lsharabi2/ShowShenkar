@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 /**
- * Created by TomGoldberg on 27.6.16.
+ * Get Location Listener
  */
 public class CurrentLocationListener implements android.location.LocationListener {
 

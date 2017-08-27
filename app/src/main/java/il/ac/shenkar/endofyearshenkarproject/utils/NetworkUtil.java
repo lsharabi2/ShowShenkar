@@ -5,7 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 /**
- * Created by User on 23/06/2017.
+ * Network Status (connected or not)
  */
 public class NetworkUtil {
 

@@ -31,6 +31,9 @@ import il.ac.shenkar.endofyearshenkarproject.activities.SuggestedRouteActivity;
 import il.ac.shenkar.endofyearshenkarproject.json.JsonURIs;
 import il.ac.shenkar.endofyearshenkarproject.json.RouteJson;
 
+/**
+ * Set recycle view of routes
+ */
 public class RoutesRecyclerAdapter extends RecyclerView.Adapter<RoutesRecyclerAdapter.CustomViewHolder> {
     private static final String TAG = "RoutesRecyclerAdapter";
     private List<RouteJson> mRoutes;
@@ -62,6 +65,7 @@ public class RoutesRecyclerAdapter extends RecyclerView.Adapter<RoutesRecyclerAd
         return (null != mRoutes ? mRoutes.size() : 0);
     }
 
+    // ProgressDialog while bringing routes from json
     public void refresh() {
         final String url = JsonURIs.getRoutessByCollegeIdUri(JsonURIs.SHENKAR_COLLEGE_ID);
 

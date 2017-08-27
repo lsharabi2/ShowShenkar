@@ -41,6 +41,9 @@ import il.ac.shenkar.endofyearshenkarproject.json.JsonURIs;
 import il.ac.shenkar.endofyearshenkarproject.json.ProjectJson;
 import il.ac.shenkar.endofyearshenkarproject.json.ProjectJsonStatic;
 
+/**
+ * Set recycle view of projects in department activity
+ */
 public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjectsRecyclerAdapter.CustomViewHolder> implements Filterable {
     private static String TAG = "DepProjectsRecyclerAdapter";
     private final RequestQueue requestQueue;
@@ -74,7 +77,7 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
         customViewHolder.projectId = depProject.getId();
         customViewHolder.txtProjectName.setText(depProject.getName());
 
-        //TODO
+        // Set line color
         if (StaticCollegeConfigJson.mMainConfig != null) {
             customViewHolder.dep_project_Line.setBackgroundColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getLineColor()));
         }
@@ -93,55 +96,14 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
         return super.getItemId(position);
     }
 
+    /**
+     * ProgressDialog while bringing projects from json by department
+     */
     @Override
     public int getItemCount() {
         return (null != depProjectList ? depProjectList.size() : 0);
     }
 
-    /*
-        public void refresh(final Long routeId) {
-            final RouteApi routeApi = new RouteApi.Builder(
-                    AndroidHttp.newCompatibleTransport(),
-                    new JacksonFactory(),
-                    new HttpRequestInitializer() {
-                        @Override
-                        public void initialize(HttpRequest request) throws IOException {
-
-                        }
-                    }).setRootUrl(Constants.ROOT_URL).build();
-
-            new AsyncTask<Void, Void, Route>() {
-
-                @Override
-                protected void onPreExecute() {
-                    super.onPreExecute();
-                    mProgressDialog = ProgressDialog.show(mContext, "טוען נתונים", "מעדכן פרויקטים", true, true);
-                }
-
-
-                @Override
-                protected Route doInBackground(Void... params) {
-                    Route route = null;
-                    try {
-                        route = routeApi.getRoute(routeId).execute();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    return route;
-                }
-
-                @Override
-                protected void onPostExecute(Route route) {
-                    //show complition in UI
-                    //fill grid view with data
-                    mProgressDialog.dismiss();
-                    if (route != null) {
-                        refresh(new HashSet<String>(route.getProjectIds()));
-                    }
-                }
-            }.execute();
-        }
-    */
     public synchronized void refresh(final long departmentId) {
 
         mProgressDialog = ProgressDialog.show(mContext, "טוען נתונים", "מעדכן פרויקטים", true, true);
@@ -182,7 +144,6 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
         requestQueue.add(req);
     }
 
-
     private void clearAndAddProjects(List<ProjectJson> projects) {
 
         ProjectJsonStatic.getProjectJsonList().clear();
@@ -194,6 +155,9 @@ public class DepProjectsRecyclerAdapter extends RecyclerView.Adapter<DepProjects
         filterDepProjectList.addAll(projects);
     }
 
+    /**
+     * This function help us get Project By Id
+     */
     public ProjectJson getProjectById(long projectId) {
         try {
             final String url = JsonURIs.getProjectByIdUri(projectId);

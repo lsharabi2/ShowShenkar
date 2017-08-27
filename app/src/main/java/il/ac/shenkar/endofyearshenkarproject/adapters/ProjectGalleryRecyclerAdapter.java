@@ -14,6 +14,9 @@ import java.util.List;
 import il.ac.shenkar.endofyearshenkarproject.R;
 import il.ac.shenkar.endofyearshenkarproject.utils.DownloadImageTask;
 
+/**
+ * Image gallery recycle view
+ */
 public class ProjectGalleryRecyclerAdapter extends RecyclerView.Adapter<ProjectGalleryRecyclerAdapter.CustomViewHolder> {
     private final ImageView mMainImage;
     private List<String> mImages;

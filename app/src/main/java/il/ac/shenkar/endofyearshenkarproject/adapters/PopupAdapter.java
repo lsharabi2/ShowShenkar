@@ -1,7 +1,7 @@
 package il.ac.shenkar.endofyearshenkarproject.adapters;
 
 /**
- * Created by oranmoshe on 7/8/16.
+ * Map Markers and text on point
  */
 
 import android.annotation.SuppressLint;

@@ -35,6 +35,9 @@ import il.ac.shenkar.endofyearshenkarproject.json.DepartmentJson;
 import il.ac.shenkar.endofyearshenkarproject.json.DepartmentJsonStatic;
 import il.ac.shenkar.endofyearshenkarproject.json.JsonURIs;
 
+/**
+ * Set grid view in main activity
+ */
 public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> implements SwipeRefreshLayout.OnRefreshListener {
 
     private final RequestQueue requestQueue;
@@ -52,7 +55,6 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> implements 
         this.data = data;
         this.requestQueue = Volley.newRequestQueue(context);
         mDbHelper = new DepartmentDbHelper(context);
-        System.out.println("Lior DepGridViewAdapter");
         addAll(mDbHelper.getAll());
     }
 
@@ -73,7 +75,6 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> implements 
 
         if (row == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            //  LayoutInflater inflater = getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
             holder = new ViewHolder();
             holder.imageTitle = (TextView) row.findViewById(R.id.text);
@@ -94,26 +95,21 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> implements 
             holder.layout.setBackgroundDrawable(makeSelector(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getPrimaryColor())));
         }
 
-
         ImageLoader.getInstance().displayImage(item.getImageUrl(), holder.image);
-
-        //new DownloadImageTask(holder.image).execute(item.getImageUrl());
 
         return row;
     }
 
     public void refresh() {
 
+        // ProgressDialog while bringing departments from json
         mProgressDialog = ProgressDialog.show(context, "טוען נתונים", "מעדכן מחלקות", true, true);
-        System.out.println("Liron JsonURIs.getDepartmentsByCollegeIdUri(JsonURIs.SHENKAR_COLLEGE_ID) =" + JsonURIs.getDepartmentsByCollegeIdUri(JsonURIs.SHENKAR_COLLEGE_ID));
         JsonArrayRequest req = new JsonArrayRequest(JsonURIs.getDepartmentsByCollegeIdUri(JsonURIs.SHENKAR_COLLEGE_ID),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        System.out.println("Liron response = " + response.toString());
                         if (JsonURIs.server_call_counter == 1) {
                             JsonURIs.server_call_counter = 0;
-                            System.out.println("Liron succeess!!!");
                         }
                         final List<DepartmentJson> departments = new ArrayList<>();
 
@@ -122,7 +118,6 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> implements 
 
                                 departments.add(new Gson().fromJson(response.getString(i), DepartmentJson.class));
                             } catch (JSONException e) {
-                                System.out.println("Liron response catch error 1" + e.toString());
                                 e.printStackTrace();
                             }
                         }
@@ -145,9 +140,7 @@ public class DepGridViewAdapter extends ArrayAdapter<DepartmentJson> implements 
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        System.out.println("Liron response catch error 2" + error.toString());
                         if (JsonURIs.server_call_counter == 0) {
-                            System.out.println("Liron first call" + error.toString());
                             refresh();
                             JsonURIs.server_call_counter = 1;
                         }

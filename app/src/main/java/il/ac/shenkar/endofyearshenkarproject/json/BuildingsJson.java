@@ -1,7 +1,7 @@
 package il.ac.shenkar.endofyearshenkarproject.json;
 
 /**
- * Created by User on 01/07/2017.
+ * Buildings Json, hold the buildings information for maps
  */
 public class BuildingsJson {
 

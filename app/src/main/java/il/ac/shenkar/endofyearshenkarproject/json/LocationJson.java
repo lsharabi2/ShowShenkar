@@ -1,7 +1,7 @@
 package il.ac.shenkar.endofyearshenkarproject.json;
 
 /**
- * Created by User on 05/04/2017.
+ * Location Json holds information about a single lat and lang point on map
  */
 public class LocationJson {
     private long id;

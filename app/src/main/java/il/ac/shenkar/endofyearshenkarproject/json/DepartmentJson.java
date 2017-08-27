@@ -2,6 +2,9 @@ package il.ac.shenkar.endofyearshenkarproject.json;
 
 import java.io.Serializable;
 
+/**
+ * Department Json, hold the Departments information
+ */
 public class DepartmentJson implements Serializable {
     private static final long serialVersionUID = 1L;
 

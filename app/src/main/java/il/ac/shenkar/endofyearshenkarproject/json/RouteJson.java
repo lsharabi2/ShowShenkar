@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created by User on 05/04/2017.
+ * routes Json, hold the routes list of projects
  */
 public class RouteJson implements Serializable {
     private static final long serialVersionUID = 1L;

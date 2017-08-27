@@ -2,6 +2,9 @@ package il.ac.shenkar.endofyearshenkarproject.json;
 
 import java.util.List;
 
+/**
+ * Project Json, hold the Projects information
+ */
 public class ProjectJson {
     private long id;
     private long institute;

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by User on 21/06/2017.
+ * DepartmentJsonStatic hold the departments list
  */
 public class DepartmentJsonStatic {
     static private List<DepartmentJson> departmentJsonList = new ArrayList<>();

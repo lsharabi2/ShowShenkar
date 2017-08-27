@@ -2,6 +2,9 @@ package il.ac.shenkar.endofyearshenkarproject.json;
 
 import java.io.Serializable;
 
+/**
+ * CollegeConfig Json, hold the institute information, for all screens (app's visual look) and general information
+ */
 public class CollegeConfigJson implements Serializable {
     private static final long serialVersionUID = 1L;
 

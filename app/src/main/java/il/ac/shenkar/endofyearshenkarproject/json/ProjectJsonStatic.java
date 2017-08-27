@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by User on 21/06/2017.
+ * ProjectJsonStatic hold the projects list
  */
 public class ProjectJsonStatic {
     static private List<ProjectJson> projectJsonList = new ArrayList<>();

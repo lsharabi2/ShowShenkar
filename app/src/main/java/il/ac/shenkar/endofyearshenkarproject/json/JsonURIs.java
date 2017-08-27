@@ -1,11 +1,13 @@
 package il.ac.shenkar.endofyearshenkarproject.json;
 
 /**
- * Created by User on 12/04/2017.
+ * Json's URI
  */
 public class JsonURIs {
 
+    // Here you can change the college's id that you received from admin
     public static final long SHENKAR_COLLEGE_ID = 1;
+
     public static final String COLLEGE_CONFIG_BY_ID_URI = "http://shenkar-show.herokuapp.com/guest/institute/id/%d";
     public static final String DEPARTMENTS_BY_COLLEGE_ID_URI = "http://shenkar-show.herokuapp.com/guest/institute/id/%d/departments";
     public static final String DEPARTMENT_BY_ID_URI = "http://shenkar-show.herokuapp.com/guest/department/id/%d";

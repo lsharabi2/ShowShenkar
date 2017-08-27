@@ -40,6 +40,9 @@ import il.ac.shenkar.endofyearshenkarproject.json.JsonURIs;
 import il.ac.shenkar.endofyearshenkarproject.json.ProjectJson;
 import il.ac.shenkar.endofyearshenkarproject.utils.DownloadImageTask;
 
+/**
+ * Project screen, show's all project information
+ */
 public class ProjectActivity extends ShenkarActivity {
 
     private static String TAG = "ProjectActivity";
@@ -66,7 +69,6 @@ public class ProjectActivity extends ShenkarActivity {
     MediaPlayer.OnPreparedListener preparedListenerPlayer = new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mp) {
-            System.out.println("Liron onPrepared");
             if (dialog != null && dialog.isShowing()) {
                 dialog.dismiss();
             }
@@ -75,168 +77,32 @@ public class ProjectActivity extends ShenkarActivity {
     };
     private HashSet<String> projectIdsStr;
     private SharedPreferences.Editor editor;
+
+    /**
+     * Like/Dislike button logic
+     */
     private View.OnClickListener LikeProject = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             ImageButton btn = (ImageButton) v;
             String tagBtn = (String) v.getTag();
+            // set add and remove from favorites logic
             if (tagBtn.equals("1")) { // is liked project, we need to dislike it
                 btn.setTag("0");
                 btn.setImageResource(R.drawable.disliked);
                 removeProjectId(projectId);
                 Toast.makeText(ProjectActivity.this, "הוסר ממועדפים", Toast.LENGTH_LONG).show();
             } else {
-                btn.setTag("1");
+                btn.setTag("1"); // is disliked project, we need to like it
                 btn.setImageResource(R.drawable.like);
                 addProjectId(projectId);
                 Toast.makeText(ProjectActivity.this, "הוסף למועדפים", Toast.LENGTH_LONG).show();
             }
 
-            //MyRouteActivity.addProjectId(ProjectActivity.this, projectId);
         }
     };
-    /*
-    public void refreshMedia() {
-        dbhelper = new DBHelper();
-        projectApi = dbhelper.getProjectApi();
-        new AsyncTask<Void, Void, Project>() {
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
 
-            @Override
-            protected Project doInBackground(Void... params) {
-                try {
-                    mProject = projectApi.getProject(projectId).execute();
-                    idContent = mProject.getContentId();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return mProject;
-            }
-        }.execute();
-
-        contentApi = dbhelper.getContentApi();
-        new AsyncTask<Void, Void, Content>() {
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected Content doInBackground(Void... params) {
-                try {
-                    content = contentApi.getContent(Long.valueOf(idContent)).execute();
-                    publishProgress(params);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return content;
-            }
-
-            @TargetApi(Build.VERSION_CODES.KITKAT)
-            @Override
-            protected void onPostExecute(Content contents) {
-                super.onPostExecute(contents);
-
-                if ((contents != null) && (content.getMedia() != null)) {
-                    listM = contents.getMedia();
-                    for (int i = 0; i < listM.size(); ++i) {
-                        if (Objects.equals(listM.get(i).getType(), "video")) {
-                            urlVideo = listM.get(i).getUrl();
-                        }
-                        if (Objects.equals(listM.get(i).getType(), "audio")) {
-                            urlAudio = listM.get(i).getUrl();
-                        }
-                    }
-                }
-                if (urlVideo != null) {
-                    playVd.setVisibility(View.VISIBLE);
-                    playVd.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent i = new Intent(ProjectActivity.this, YouTubeActivity.class);
-                            i.putExtra("url", urlVideo);
-                            startActivity(i);
-                        }
-                    });
-                }
-                if (urlVideo == null) {
-                    playVdGray.setVisibility(View.VISIBLE);
-                    playVdGray.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Toast.makeText(ProjectActivity.this, "אין וידאו לפרוייקט", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
-                if (urlAudio == null) {
-                    playSDGray.setVisibility(View.VISIBLE);
-                    playSDGray.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Toast.makeText(ProjectActivity.this, "אין קטע שמיעה", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
-                if (urlAudio != null) {
-                    playSD.setVisibility(View.VISIBLE);
-                    playSD.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            final Dialog dialogT = new Dialog(context);
-                            dialogT.setContentView(R.layout.custom);
-                            ImageButton dialogButtonPlay = (ImageButton) dialogT.findViewById(R.id.imageButtonPlay);
-                            // if button is clicked, close the custom dialog
-                            dialogButtonPlay.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    //  String url = "http://programmerguru.com/android-tutorial/wp-content/uploads/2013/04/hosannatelugu.mp3";
-                                    String url = urlAudio;
-                                    mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                                    try {
-                                        mediaPlayer.setDataSource(url);
-                                    } catch (IllegalArgumentException e) {
-
-                                    } catch (SecurityException e) {
-
-                                    } catch (IllegalStateException e) {
-
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    try {
-                                        mediaPlayer.prepare();
-                                    } catch (IllegalStateException e) {
-
-                                    } catch (IOException e) {
-
-                                    }
-                                    mediaPlayer.start();
-                                }
-                            });
-                            ImageButton dialogButtonStop = (ImageButton) dialogT.findViewById(R.id.imageButtonStop);
-                            // if button is clicked, close the custom dialog
-                            dialogButtonStop.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    mediaPlayer.stop();
-                                }
-                            });
-                            dialogT.show();
-                        }
-                    });
-                }
-            }
-
-            @Override
-            protected void onProgressUpdate(Void... params) {
-                super.onProgressUpdate();
-            }
-        }.execute();
-    }*/
-private View.OnClickListener shareProject = new View.OnClickListener() {
+    private View.OnClickListener shareProject = new View.OnClickListener() {
     @Override
     public void onClick(View v) {
         shareVideo();
@@ -244,6 +110,10 @@ private View.OnClickListener shareProject = new View.OnClickListener() {
 };
     private ImageView dialogButtonPlay;
     private ImageView imageButtonPause;
+
+    /**
+     * Media player logic
+     */
     View.OnClickListener mediaPlayerClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -279,10 +149,6 @@ private View.OnClickListener shareProject = new View.OnClickListener() {
     };
 
     private void addProjectId(Long projectId) {
-//        SharedPreferences sharedPref = context.getSharedPreferences(
-//                context.getString(R.string.preference_file_key), MODE_PRIVATE);
-//        SharedPreferences.Editor editor = sharedPref.edit();
-//        Set<String> projectIdsStr = new HashSet<>(sharedPref.getStringSet(context.getString(R.string.preference_ids_key), new HashSet<String>()));
         projectIdsStr.add(Long.toString(projectId));
 
         editor.putStringSet(context.getString(R.string.preference_ids_key), projectIdsStr);
@@ -290,10 +156,6 @@ private View.OnClickListener shareProject = new View.OnClickListener() {
     }
 
     private void removeProjectId(Long projectId) {
-//        SharedPreferences sharedPref = context.getSharedPreferences(
-//                context.getString(R.string.preference_file_key), MODE_PRIVATE);
-//        SharedPreferences.Editor editor = sharedPref.edit();
-//        Set<String> projectIdsStr = new HashSet<>(sharedPref.getStringSet(context.getString(R.string.preference_ids_key), new HashSet<String>()));
         projectIdsStr.remove(Long.toString(projectId));
 
         editor.putStringSet(context.getString(R.string.preference_ids_key), projectIdsStr);
@@ -323,8 +185,6 @@ private View.OnClickListener shareProject = new View.OnClickListener() {
         btnLike = (ImageButton) findViewById(R.id.btnLike);
 
         checkIfLiked();
-        //  btnDisLike = (ImageButton) findViewById(R.id.btnDislike);
-        //btnDisLike.setOnClickListener(DislikeProject);
         btnLike.setOnClickListener(LikeProject);
 
 
@@ -529,7 +389,6 @@ private View.OnClickListener shareProject = new View.OnClickListener() {
                 if (project != null) {
                     mProject = project;
 
-                    //TODO may be here add to static list
                     refreshProjectData();
                 }
             }
@@ -538,23 +397,7 @@ private View.OnClickListener shareProject = new View.OnClickListener() {
     }
 
     public void shareProject(View v) {
-
-//        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-//        Uri screenshotUri = Uri.parse("android.resource://il.ac.shenkar.showshenkar.endofyearshenkar.activities/*");
-//        try {
-//            InputStream stream = getContentResolver().openInputStream(screenshotUri);
-//        } catch (FileNotFoundException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//        sharingIntent.setType("image/jpeg");
-//        sharingIntent.putExtra(Intent.EXTRA_STREAM, screenshotUri);
-//        startActivity(Intent.createChooser(sharingIntent, "Share Project Using"));
-
         shareVideo();
-
-
-        // TODO: implement share project
         Toast.makeText(this, "שתף פרויקט", Toast.LENGTH_LONG).show();
     }
 
@@ -573,104 +416,7 @@ private View.OnClickListener shareProject = new View.OnClickListener() {
         shareIntent.putExtra(Intent.EXTRA_TEXT, urlYoutube);
         shareIntent.setType("text/plain");
         startActivity(Intent.createChooser(shareIntent, "Share via"));
-
-        // String Try = "זהו פרויקט הגמר שלי אשר עליו עמלתי רבות, אשמח אם תוכלו לשתפו עם אחרים במידה ונהניתם: ";
-
-
     }
-
-    // https://shenkar-show-web-new.herokuapp.com/index.html#/projectDetails/mProject.getId()
-
-    private void sharePhotos() {
-
-
-//        for(String mProjectImage : mProjectImages) {
-//
-//            ShareLi sharePhoto = new SharePhoto.Builder().
-//        }
-    }
-
-
- /*
-    public void refresh() {
-        final ProjectApi projectApi = new ProjectApi.Builder(
-                AndroidHttp.newCompatibleTransport(),
-                new JacksonFactory(),
-                new HttpRequestInitializer() {
-                    @Override
-                    public void initialize(HttpRequest request) throws IOException {
-
-                    }
-                }).setRootUrl(Constants.ROOT_URL).build();
-        new AsyncTask<Void, Void, Project>() {
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                mProgressDialog = ProgressDialog.show(ProjectActivity.this, "טוען נתונים", "מעדכן נתוני פרויקט", true, true);
-            }
-
-            @Override
-            protected Project doInBackground(Void... params) {
-                try {
-                    return projectApi.getProject(projectId).execute();
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Project project) {
-                mProgressDialog.dismiss();
-                if (project != null) {
-                    mProject = project;
-                    refreshContent(Long.parseLong(mProject.getContentId()));
-                }
-            }
-
-            @Override
-            protected void onProgressUpdate(Void... params) {
-                super.onProgressUpdate();
-            }
-
-        }.execute();
-    }
-
-    private void refreshContent(final Long contentId) {
-        final ContentApi contentApi = new ContentApi.Builder(
-                AndroidHttp.newCompatibleTransport(),
-                new JacksonFactory(),
-                new HttpRequestInitializer() {
-                    @Override
-                    public void initialize(HttpRequest request) throws IOException {
-
-                    }
-                }).setRootUrl(Constants.ROOT_URL).build();
-        new AsyncTask<Void, Void, Content>() {
-            @Override
-            protected Content doInBackground(Void... params) {
-                try {
-                    return contentApi.getContent(contentId).execute();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Content result) {
-                if (result != null) {
-                    adapter.refresh(result.getMedia());
-                    Info info = result.getInfo();
-                    if (info != null) {
-                        views.txtProjectDesc.setText(info.getText());
-                    }
-                }
-            }
-        }.execute();
-    }*/
-
 
     @Override
     void setObjectID() {

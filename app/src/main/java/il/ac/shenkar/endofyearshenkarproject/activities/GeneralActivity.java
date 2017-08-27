@@ -9,18 +9,17 @@ import android.widget.TextView;
 import il.ac.shenkar.endofyearshenkarproject.R;
 import il.ac.shenkar.endofyearshenkarproject.utils.DownloadImageTask;
 
-
+/**
+ * General information about the institute
+ */
 public class GeneralActivity extends ShenkarActivity {
-
-    // private CollegeConfigJson mMainConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_general);
 
-        // mMainConfig = (CollegeConfigJson) getIntent().getSerializableExtra("main_config");
-
+        // set screen views from StaticCollegeConfigJson which hold CollegeConfigJson information and about's data (information and image)
         if (StaticCollegeConfigJson.mMainConfig != null) {
             TextView generalInfo = (TextView) findViewById(R.id.txtGeneralInfo);
             generalInfo.setText(StaticCollegeConfigJson.mMainConfig.getAboutText());

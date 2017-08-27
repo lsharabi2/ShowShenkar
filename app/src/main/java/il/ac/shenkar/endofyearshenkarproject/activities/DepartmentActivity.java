@@ -19,7 +19,9 @@ import il.ac.shenkar.endofyearshenkarproject.adapters.DepProjectsRecyclerAdapter
 import il.ac.shenkar.endofyearshenkarproject.json.ProjectJson;
 import il.ac.shenkar.endofyearshenkarproject.utils.DownloadImageTask;
 
-
+/**
+ * This screen shows you all the projects with in the department and allow you to search the onw you seek
+ */
 public class DepartmentActivity extends ShenkarActivity {
     private static String TAG = "DepartmentActivity";
     private List<ProjectJson> mProjects;
@@ -36,12 +38,15 @@ public class DepartmentActivity extends ShenkarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_department);
 
+        // data we received from main Activity screen
         mDepartmentId = getIntent().getLongExtra("id", 0);
         mDepartmentName = getIntent().getStringExtra("title");
         mLocation = getIntent().getStringExtra("location");
-        buttonWhere = (ImageButton) findViewById(R.id.btnLocation);
         final String imageUrl = getIntent().getStringExtra("image");
 
+        buttonWhere = (ImageButton) findViewById(R.id.btnLocation);
+
+        // set views
         TextView titleTextView = (TextView) findViewById(R.id.title);
         titleTextView.setText(mDepartmentName);
 
@@ -61,7 +66,7 @@ public class DepartmentActivity extends ShenkarActivity {
         adapter = new DepProjectsRecyclerAdapter(this, mProjects);
         rvProjects.setAdapter(adapter);
 
-
+        // Search project or student
         SearchView activity_department_search = (SearchView) findViewById(R.id.activity_department_search);
         activity_department_search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -81,7 +86,7 @@ public class DepartmentActivity extends ShenkarActivity {
         setObjectID();
     }
 
-
+    // set screen views from StaticCollegeConfigJson which hold CollegeConfigJson information (general app look)
     private void initialize() {
         if (StaticCollegeConfigJson.mMainConfig != null) {
             new DownloadImageTask((ImageView) findViewById(R.id.toolbaricon)).execute(StaticCollegeConfigJson.mMainConfig.getLogoUrl());
@@ -97,29 +102,14 @@ public class DepartmentActivity extends ShenkarActivity {
         }
     }
 
-
-
-
     @Override
     public void onResume() {
         super.onResume();
         adapter.refresh(mDepartmentId);
     }
 
-//    public void showDepartmentLocation(View v) {
-//
-//        System.out.println("Liron showDepartmentLocation ");
-//
-//        Intent i = new Intent(this, MapActivity.class);
-//        i.putExtra("objectId", mDepartmentId);
-//        i.putExtra("objectType", "department");
-//        startActivity(i);
-//    }
-
-
     @Override
     void setObjectID() {
-        System.out.println("Liron  setObjectID mDepartmentId =" + mDepartmentId);
         this.objectId = mDepartmentId;
         this.objectType = "department";
     }

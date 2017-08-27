@@ -7,7 +7,9 @@ import android.os.Handler;
 
 import il.ac.shenkar.endofyearshenkarproject.R;
 
-
+/**
+ * This is the first screen in app which launch the app logo
+ */
 public class LaunchActivity extends Activity {
 
     private static final int SPLASH_TIMEOUT = 3000;

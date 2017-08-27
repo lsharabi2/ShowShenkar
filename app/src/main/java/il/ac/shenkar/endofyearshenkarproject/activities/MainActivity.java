@@ -37,6 +37,10 @@ import il.ac.shenkar.endofyearshenkarproject.json.GsonRequest;
 import il.ac.shenkar.endofyearshenkarproject.json.JsonURIs;
 import il.ac.shenkar.endofyearshenkarproject.utils.NetworkUtil;
 
+/**
+ * College level screen
+ */
+
 public class MainActivity extends ShenkarActivity {
 
 
@@ -64,46 +68,32 @@ public class MainActivity extends ShenkarActivity {
         gridAdapter.setSwipeRefreshLayout((SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout));
         gridView.setAdapter(gridAdapter);
 
-//        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-//                DepartmentJson item = (DepartmentJson) parent.getItemAtPosition(position);
-//
-//                //Create intent
-//                Intent intent = new Intent(MainActivity.this, DepartmentActivity.class);
-//                intent.putExtra("title", item.getName());
-//                intent.putExtra("id", item.getId());
-//                intent.putExtra("location", item.getLocationDescription());
-//                intent.putExtra("image", item.getLargeImageUrl());
-//
-//                //Start details activity
-//                startActivity(intent);
-//            }
-//        });
-
-
         refreshCollegeConfigInfo();
     }
 
 
+    /**
+     * Set mobile's cache memory for faster loading from the second time you enter the app (will save data on mobile cache instead bringing it from the server first)
+     * the information will be refreshed from the server after fiew seconds that the app is running unless no change has accrued
+     */
     private void initImageLoader(Context baseContext) {
         DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).build();
 
         ImageLoaderConfiguration.Builder config = new ImageLoaderConfiguration.Builder(baseContext);
         config.defaultDisplayImageOptions(defaultOptions);
-        config.diskCacheSize(50 * 1024 * 1024); //50MiB
+        config.diskCacheSize(50 * 1024 * 1024);
 
         ImageLoader.getInstance().init(config.build());
-
-
-        //if neded add
 
     }
 
     @Override
     void setObjectID() {
-
     }
 
+    /**
+     * Get CollegeConfig information from jason
+     */
     private void refreshCollegeConfigInfo() {
         // Instantiate the RequestQueue.
         mRequestQueue = Volley.newRequestQueue(this);
@@ -115,9 +105,7 @@ public class MainActivity extends ShenkarActivity {
                     public void onResponse(CollegeConfigJson response) {
                         System.out.println("Liron StaticCollegeConfigJson response =" + response.toString());
                         StaticCollegeConfigJson.mMainConfig = response;
-                        //  if (StaticCollegeConfigJson.mMainConfig != null) {
                             update_views(StaticCollegeConfigJson.mMainConfig);
-                        //}
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -132,11 +120,17 @@ public class MainActivity extends ShenkarActivity {
 
     }
 
+    /**
+     * Update all views for this screen
+     */
     private void update_views(CollegeConfigJson config) {
+
+        // logo text logic
         logoText = (TextView) findViewById(R.id.logo_text);
         logoText.setText(config.getName());
         logoText.setTextColor(Color.parseColor(config.getMainTextColor()));
 
+        // app color logic
         ColorDrawable bgShape = (ColorDrawable) logoText.getBackground();
         bgShape.setColor(Color.parseColor(config.getPrimaryColor()));
 
@@ -144,10 +138,13 @@ public class MainActivity extends ShenkarActivity {
         bgShape = (ColorDrawable) mainLayout.getBackground();
         bgShape.setColor(Color.parseColor(config.getSecondaryColor()));
 
+        // logo image changed by institute manager
         ImageView logo_img = (ImageView) findViewById(R.id.toolbaricon);
         ImageLoader.getInstance().displayImage(config.getLogoUrl(), logo_img);
 
-
+        /**
+         * When an item on the grid is pressed move to department activity and send data required
+         */
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 DepartmentJson item = (DepartmentJson) parent.getItemAtPosition(position);
@@ -176,21 +173,18 @@ public class MainActivity extends ShenkarActivity {
 
     public void openRoutesActivity(View v) {
         Intent intent = new Intent(this, RoutesActivity.class);
-        //   intent.putExtra("main_config", mMainConfig);
         startActivity(intent);
 
     }
 
     public void openMyRouteActivity(View v) {
         Intent intent = new Intent(this, MyRouteActivity.class);
-        //  intent.putExtra("main_config", mMainConfig);
         startActivity(intent);
 
     }
 
     public void openGeneralActivity(View v) {
         Intent intent = new Intent(this, GeneralActivity.class);
-        //   intent.putExtra("main_config", mMainConfig);
         startActivity(intent);
 
     }
@@ -199,7 +193,6 @@ public class MainActivity extends ShenkarActivity {
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("Liron onResume gridAdapter.refresh()");
         gridAdapter.refresh();
         String status = NetworkUtil.getConnectivityStatusString(MainActivity.this);
         Toast.makeText(MainActivity.this, status, Toast.LENGTH_LONG).show();
@@ -220,11 +213,12 @@ public class MainActivity extends ShenkarActivity {
         System.exit(0);
     }
 
-
+    /**
+     * Finish broadcast on exit
+     */
     private void killBroadcast() {
         PackageManager pm = MainActivity.this.getPackageManager();
         ComponentName componentName = new ComponentName(MainActivity.this, BroadcastReceiverClass.class);
-        //  int status = getApplicationContext().getPackageManager().getComponentEnabledSetting(componentName);
         pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                 PackageManager.DONT_KILL_APP);
     }

@@ -17,6 +17,9 @@ import il.ac.shenkar.endofyearshenkarproject.json.ProjectJson;
 import il.ac.shenkar.endofyearshenkarproject.json.RouteJson;
 import il.ac.shenkar.endofyearshenkarproject.utils.DownloadImageTask;
 
+/**
+ * This screen shows you favorite routes that was chosen by the institute and department managers
+ */
 public class SuggestedRouteActivity extends ShenkarActivity {
 
     private List<ProjectJson> mProjects;
@@ -48,6 +51,7 @@ public class SuggestedRouteActivity extends ShenkarActivity {
         initialize();
     }
 
+    // set screen views from StaticCollegeConfigJson which hold CollegeConfigJson information (general app look)
     private void initialize() {
         if (StaticCollegeConfigJson.mMainConfig != null) {
             new DownloadImageTask((ImageView) findViewById(R.id.toolbaricon)).execute(StaticCollegeConfigJson.mMainConfig.getLogoUrl());

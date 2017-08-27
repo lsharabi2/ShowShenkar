@@ -20,6 +20,9 @@ import il.ac.shenkar.endofyearshenkarproject.adapters.DepProjectsRecyclerAdapter
 import il.ac.shenkar.endofyearshenkarproject.json.ProjectJson;
 import il.ac.shenkar.endofyearshenkarproject.utils.DownloadImageTask;
 
+/**
+ * This screen shows your favorite route (projects that you marked in thier project activity)
+ */
 public class MyRouteActivity extends ShenkarActivity {
     private List<ProjectJson> mProjects;
 
@@ -27,16 +30,11 @@ public class MyRouteActivity extends ShenkarActivity {
     private RecyclerView rvProjects;
     private TextView emptyView;
 
-    //  private CollegeConfigJson mMainConfig;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_route);
 
-
-        // Initialize recycler view
         rvProjects = (RecyclerView) findViewById(R.id.projects);
         rvProjects.setLayoutManager(new LinearLayoutManager(this));
 
@@ -45,15 +43,11 @@ public class MyRouteActivity extends ShenkarActivity {
         adapter = new DepProjectsRecyclerAdapter(this, mProjects);
         rvProjects.setAdapter(adapter);
 
-        //  StaticCollegeConfigJson.mMainConfig = (CollegeConfigJson) getIntent().getSerializableExtra("main_config");
-
+        // set screen views from StaticCollegeConfigJson which hold CollegeConfigJson information
         if (StaticCollegeConfigJson.mMainConfig != null) {
             new DownloadImageTask((ImageView) findViewById(R.id.toolbaricon)).execute(StaticCollegeConfigJson.mMainConfig.getLogoUrl());
             TextView MyRoute_Headline = (TextView) findViewById(R.id.MyRouteHeadline);
             MyRoute_Headline.setTextColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getMainTextColor()));
-
-            // ColorDrawable bgShape = (ColorDrawable) MyRoute_Headline.getBackground();
-            // bgShape.setColor(Color.parseColor(mMainConfig.getPrimaryColor()));
 
             LinearLayout LLayout = (LinearLayout) findViewById(R.id.MyRouteLayout);
             LLayout.setBackgroundColor(Color.parseColor(StaticCollegeConfigJson.mMainConfig.getSecondaryColor()));
@@ -71,14 +65,17 @@ public class MyRouteActivity extends ShenkarActivity {
         super.onResume();
         adapter.clear();
 
+        // add SharedPreferences so if you exit app then the information stay saved on mobile
         SharedPreferences sharedPref = getSharedPreferences(
                 getString(R.string.preference_file_key), MODE_PRIVATE);
         Set<String> projectIds = sharedPref.getStringSet(getString(R.string.preference_ids_key), new HashSet<String>());
 
+        // if there are no projects write a default message
         if (projectIds == null || projectIds.isEmpty()) {
             rvProjects.setVisibility(View.GONE);
             emptyView.setVisibility(View.VISIBLE);
         }
+        // else bring the list of projects by their id
         else {
             List<Long> projectIdsLong = new ArrayList<Long>();
             for (String idString : projectIds) {

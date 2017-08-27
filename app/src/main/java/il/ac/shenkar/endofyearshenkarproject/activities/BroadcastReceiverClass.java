@@ -7,7 +7,7 @@ import android.widget.Toast;
 import il.ac.shenkar.endofyearshenkarproject.utils.NetworkUtil;
 
 /**
- * Created by User on 23/06/2017.
+ * Broadcast wifi/internet status
  */
 public class BroadcastReceiverClass extends android.content.BroadcastReceiver {
     private String status;

@@ -59,16 +59,15 @@ public abstract class ShenkarActivity extends AppCompatActivity {
 
     abstract void setObjectID();
 
-
+    /*
+    * Send to map activity the object id and type that you collected from scanner
+    * */
     private void showMap() {
         Intent i = new Intent(this, MapActivity.class);
 
         i.putExtra("objectId", objectId);
         i.putExtra("objectType", objectType);
 
-
-//        i.putExtra("objectId", "general");
-//        i.putExtra("objectType", "general");
         startActivity(i);
 
     }
@@ -97,8 +96,6 @@ public abstract class ShenkarActivity extends AppCompatActivity {
                 Log.d("MainActivity", "Cancelled scan");
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
-//                String locationId;
-                //DBHelper helper = new DBHelper();
                 try {
 
                     String[] parts = result.getContents().split(";");
@@ -106,9 +103,6 @@ public abstract class ShenkarActivity extends AppCompatActivity {
 
                         String oType = parts[1];
                         Long oID = Long.valueOf(parts[0]);
-
-                        //rContent = Long.valueOf(result.getContents());
-                        //locationId = result.getContents();
 
                         Intent to_mapActivity = new Intent(this, MapActivity.class);
                         to_mapActivity.putExtra("objectId", oID);
@@ -119,47 +113,12 @@ public abstract class ShenkarActivity extends AppCompatActivity {
 
                 } catch (NumberFormatException e){
 
-                    //TODO: location id, goto map activity
                 }
-                /*
-                projectApi = helper.getProjectApi();
-                new AsyncTask<Void, Void, Project>() {
-                    @Override
-                    protected Project doInBackground(Void... params) {
-                        try {
-                            project = projectApi.getProject(rContent).execute();
-                            publishProgress(params);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        return project;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Project project) {
-                        super.onPostExecute(project);
-                        Intent i = new Intent(ShenkarActivity.this, ProjectActivity.class);
-                        String students = "";
-                        for(String name: project.getStudentNames()){
-                            students += name + " ";
-                        }
-                        i.putExtra("id", project.getId());
-                        i.putExtra("project", project.getName());
-                        i.putExtra("students", students);
-                        startActivity(i);
-                    }
-                }.execute();
-
-                */
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
             Qrlocation = result.getContents();
         }
 
-        /*
-            read the project id from the QR code then add it to my route using the following code
-            MyRouteActivity.addProjectId(this, projectId);
-         */
     }
 }

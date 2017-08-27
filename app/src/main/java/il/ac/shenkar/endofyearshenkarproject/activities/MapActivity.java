@@ -45,13 +45,11 @@ import il.ac.shenkar.endofyearshenkarproject.json.ProjectJson;
 import il.ac.shenkar.endofyearshenkarproject.json.ProjectJsonStatic;
 import il.ac.shenkar.endofyearshenkarproject.utils.PermissionUtils;
 
+/**
+ * set requested map
+ */
 public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private static final LatLng PERNIK = new LatLng(32.0900466 , 34.8035959);
-    private static final LatLng MITSHLE = new LatLng(32.089928, 34.802239);
-    private static final LatLng INTERIOR_DESIGN = new LatLng(32.09030615669672, 34.803183311601877);
-    private static final LatLng SHENKAR = new LatLng(32.090023, 34.803151);
-    private static final LatLng ELIT = new LatLng(32.08264557800064, 34.80440218001604);
     /**
      * Request code for location permission request.
      *
@@ -89,36 +87,42 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
 
         objectId = getIntent().getLongExtra("objectId", 0);
         objectType = getIntent().getStringExtra("objectType");
-        System.out.println("Liron objectId =" + objectId);
-        System.out.println("Liron objectType =" + objectType);
     }
 
     @Override
     void setObjectID() {
     }
 
-
+    /**
+     * Check scanner/map results (project,department or general)
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         enableMyLocation();
+        // if project
         if (objectType.equals("project")) {
             List<ProjectJson> projects = ProjectJsonStatic.getProjectJsonList();
+            // if we already have the projects list from other activities no need to bring them again
             if (!projects.isEmpty()) {
                 SetProjectMapFromList(objectId);
             } else {
                 getProjectByID(objectId);
             }
-
+            // if department
         } else if (objectType.equals("department")) {
             String strUrl = SetDepartmentMap(objectId);
 
             mMap.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater(), strUrl));
+            // if general
         } else if (objectType.equals("general")) {
             SetGeneralMap();
         }
     }
 
+    /**
+     * find objectId project in projects (when we don't have the list of projects from former activities)
+     */
     private void getProjectByID(final Long projectId) {
 
         new AsyncTask<Void, Void, ProjectJson>() {
@@ -135,15 +139,15 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
                 if (project != null) {
 
                     SetProjectMap(project);
-                    //ProjectJsonStatic.getProjectJsonList().clear();
-                    //  ProjectJsonStatic.setProjectJsonList(projects);
                 }
             }
         }.execute();
 
     }
 
-
+    /**
+     * get project data by id from json
+     */
     public ProjectJson getProjectById(long projectId) {
         try {
             final String url = JsonURIs.getProjectByIdUri(projectId);
@@ -171,41 +175,34 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
         return null;
     }
 
-
+    /**
+     * Find department by id and set her map
+     */
     private String SetDepartmentMap(final Long departmentId) {
         List<DepartmentJson> deparment = DepartmentJsonStatic.getDepartmentJsonList();
         String strUrl = "";
         for (DepartmentJson departmentJson : deparment) {
             if (departmentJson.getId() == departmentId) {
-//                LocationJson locationJson = departmentJson.getLocation();
-//                double lat = locationJson.getLat();
-//                double lng = locationJson.getLng();
-//                LatLng location = new LatLng(lat, lng);
                 SetMapByDepartmentName(departmentJson);
                 strUrl = departmentJson.getImageUrl();
                 return strUrl;
-                //   mMap.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater(),departmentJson.getImageUrl()));
             }
         }
         return strUrl;
     }
 
-
+    /**
+     * Set project's department map and their markers
+     */
     private void SetProjectMap(ProjectJson project) {
 
         SetDepartmentMap(project.getDepartmentId());
         AddMarkerByLocationContent(project);
-
-
-//        List<ProjectJson> projectList = ProjectJsonStatic.getProjectJsonList();
-//        for (ProjectJson project : projectList) {
-//            if (project.getId() == projectId) {
-//                SetDepartmentMap(project.getDepartmentId());
-//                AddMarkerByLocationContent(project);
-//            }
-//        }
     }
 
+    /**
+     * This function handle the case we do have the list of projects and we want to show the requested project on map
+     */
     private void SetProjectMapFromList(final Long projectId) {
         List<ProjectJson> projectList = ProjectJsonStatic.getProjectJsonList();
         for (ProjectJson project : projectList) {
@@ -217,6 +214,9 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
         }
     }
 
+    /**
+     * Add project marker
+     */
     private void AddMarkerByLocationContent(ProjectJson project) {
         LocationJson locationJson = project.getLocation();
         double lat = locationJson.getLat();
@@ -224,132 +224,25 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
         LatLng location = new LatLng(lat, lng);
         mMap.addMarker(new MarkerOptions().position(location).title(project.getName()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
 
-
-        //TODO check if no location in the project
-
     }
     /*
-     *   Set General Map
+     * Set General Map
      * */
     public void SetGeneralMap(){
         SetMapByDepartmentName(null);
         mMap.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater(),""));
     }
 
-    /*
-     *   Set Department Map
-     * */
-//    public void SetDepartmentMap(final Long departmentId){
-//        final DepartmentApi departmentApi = new DepartmentApi.Builder(
-//                AndroidHttp.newCompatibleTransport(),
-//                new JacksonFactory(),
-//                new HttpRequestInitializer() {
-//                    @Override
-//                    public void initialize(HttpRequest request) throws IOException {
-//
-//                    }
-//                }).setRootUrl(Constants.ROOT_URL).build();
-//
-//        new AsyncTask<Void, Void, Department>() {
-//            @Override
-//            protected Department doInBackground(Void... params) {
-//                try {
-//                    return departmentApi.getDepartment(departmentId).execute();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                return null;
-//            }
-//
-//            @Override
-//            protected void onPostExecute(Department department) {
-//                if (department != null) {
-//                    SetMapByDepartmentName(department.getName());
-//                    mMap.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater(),department.getImageUrl()));
-//                }
-//            }
-//        }.execute();
-//    }
-//
-//    /*
-//     *   Set Project Map
-//     * */
-//    public void SetProjectMap(final Long projectId) {
-//        final ProjectApi projectApi = new ProjectApi.Builder(
-//                AndroidHttp.newCompatibleTransport(),
-//                new JacksonFactory(),
-//                new HttpRequestInitializer() {
-//                    @Override
-//                    public void initialize(HttpRequest request) throws IOException {
-//
-//                    }
-//                }).setRootUrl(Constants.ROOT_URL).build();
-//
-//
-//        new AsyncTask<Void, Void, Project>() {
-//            @Override
-//            protected Project doInBackground(Void... params) {
-//                try {
-//                    return projectApi.getProject(projectId).execute();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                return null;
-//            }
-//
-//            @Override
-//            protected void onPostExecute(Project project) {
-//                if (project != null) {
-//                    SetMapByDepartmentName(project.getDepartment());
-//                    AddMarkerByLocationContent(Long.parseLong(project.getContentId()), project.getName());
-//                }
-//            }
-//        }.execute();
-//    }
-//
-//    private void AddMarkerByLocationContent(final Long contentId, final String text){
-//        final ContentApi contentApi = new ContentApi.Builder(
-//                AndroidHttp.newCompatibleTransport(),
-//                new JacksonFactory(),
-//                new HttpRequestInitializer() {
-//                    @Override
-//                    public void initialize(HttpRequest request) throws IOException {
-//
-//                    }
-//                }).setRootUrl(Constants.ROOT_URL).build();
-//
-//        new AsyncTask<Void, Void,Content>() {
-//            @Override
-//            protected Content doInBackground(Void... params) {
-//                Content content = null;
-//                try {
-//                    content = contentApi.getContent(contentId).execute();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                return content;
-//            }
-//
-//            @Override
-//            protected void onPostExecute(Content content) {
-//                if (content != null) {
-//                    // Add a marker of project by content-location
-//                    LatLng location = null;
-//                   try {
-//                       location = new LatLng(content.getLocation().getLat(), content.getLocation().getLng());
-//                       mMap.addMarker(new MarkerOptions().position(location).title(text));
-//                   }catch (Exception exc) {
-//                       mMap.addMarker(new MarkerOptions().position(SHENKAR).title(text));
-//                   }
-//                }
-//            }
-//        }.execute();
-//    }
-
+    /**
+     * Set department or general marker
+     */
     void AddMarker(LatLng location,String text){
         mMap.addMarker(new MarkerOptions().position(location).title(text));
     }
 
+    /**
+     * Set department map and marker
+     */
     private void SetMapByDepartmentName(DepartmentJson departmentJson) {
         LatLng location;
         String department = "";
@@ -382,12 +275,16 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
             zoom = departmentJson.getBuilding().getZoom();
         }
 
+        // Zoom change according to user demand
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationBuild, zoom));
         AddMarker(location, building);
 
         setUpMap(path);
     }
 
+    /**
+     * here we address the server which whom we download the maps
+     */
     private void setUpMap(final String path) {
 
 
@@ -396,13 +293,12 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
         TileProvider tileProvider = new UrlTileProvider(256, 256) {
             @Override
             public synchronized URL getTileUrl(int x, int y, int zoom) {
-                // The moon tile coordinate system is reversed.  This is not normal.
                 int reversedY = (1 << zoom) - y - 2;
+                // This is the url of the map we need
                 String s = String.format(Locale.US, "http://megastar.co.il/EPSG3857/" + path + "/%d/%d/%d.png", zoom, x, y);  // "http://shenkar.xyz/maps/1/"
                 URL url = null;
                 try {
                     url = new URL(s);
-                    //   System.out.println("Liron path url="+ url);
                 } catch (MalformedURLException e) {
                     throw new AssertionError(e);
                 }
@@ -438,8 +334,6 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
         }
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
-            //mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
-            //mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
             System.out.println("mLastLocation.getLatitude()) ---------> "+ mLastLocation.getLatitude());
             System.out.println("mLastLocation.getLongitude()) ---------> "+ mLastLocation.getLongitude());
         }

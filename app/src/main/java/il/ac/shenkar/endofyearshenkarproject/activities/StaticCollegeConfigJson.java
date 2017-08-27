@@ -3,7 +3,7 @@ package il.ac.shenkar.endofyearshenkarproject.activities;
 import il.ac.shenkar.endofyearshenkarproject.json.CollegeConfigJson;
 
 /**
- * Created by User on 09/06/2017.
+ * that class represent the College Json information which we need for the general look of each screen
  */
 public class StaticCollegeConfigJson {
     public static CollegeConfigJson mMainConfig;

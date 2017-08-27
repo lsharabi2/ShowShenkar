@@ -19,7 +19,7 @@ public class GeneralActivity extends ShenkarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_general);
 
-        // set screen views from StaticCollegeConfigJson which hold CollegeConfigJson information and about's data (information and image)
+        // Set screen views from StaticCollegeConfigJson which hold CollegeConfigJson information and about's data (information and image)
         if (StaticCollegeConfigJson.mMainConfig != null) {
             TextView generalInfo = (TextView) findViewById(R.id.txtGeneralInfo);
             generalInfo.setText(StaticCollegeConfigJson.mMainConfig.getAboutText());

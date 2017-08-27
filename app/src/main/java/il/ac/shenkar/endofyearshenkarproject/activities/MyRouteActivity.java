@@ -43,7 +43,7 @@ public class MyRouteActivity extends ShenkarActivity {
         adapter = new DepProjectsRecyclerAdapter(this, mProjects);
         rvProjects.setAdapter(adapter);
 
-        // set screen views from StaticCollegeConfigJson which hold CollegeConfigJson information
+        // Set screen views from StaticCollegeConfigJson which hold CollegeConfigJson information
         if (StaticCollegeConfigJson.mMainConfig != null) {
             new DownloadImageTask((ImageView) findViewById(R.id.toolbaricon)).execute(StaticCollegeConfigJson.mMainConfig.getLogoUrl());
             TextView MyRoute_Headline = (TextView) findViewById(R.id.MyRouteHeadline);

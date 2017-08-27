@@ -18,7 +18,7 @@ import il.ac.shenkar.endofyearshenkarproject.json.RouteJson;
 import il.ac.shenkar.endofyearshenkarproject.utils.DownloadImageTask;
 
 /**
- * This screen shows you favorite routes that was chosen by the institute and department managers
+ * This screen shows you the projects within the favorite route you have choose in routes activity
  */
 public class SuggestedRouteActivity extends ShenkarActivity {
 

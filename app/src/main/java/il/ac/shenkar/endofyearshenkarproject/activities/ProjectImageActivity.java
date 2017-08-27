@@ -6,6 +6,9 @@ import android.widget.ImageView;
 import il.ac.shenkar.endofyearshenkarproject.R;
 import il.ac.shenkar.endofyearshenkarproject.utils.DownloadImageTask;
 
+/**
+ * Gallery image screen, show's the chosen image from gallery in project activity
+ */
 public class ProjectImageActivity extends ShenkarActivity {
 
     @Override

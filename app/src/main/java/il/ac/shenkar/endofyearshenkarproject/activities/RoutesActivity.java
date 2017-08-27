@@ -17,13 +17,13 @@ import il.ac.shenkar.endofyearshenkarproject.adapters.RoutesRecyclerAdapter;
 import il.ac.shenkar.endofyearshenkarproject.json.RouteJson;
 import il.ac.shenkar.endofyearshenkarproject.utils.DownloadImageTask;
 
+/**
+ * This screen shows you favorite routes that was chosen by the institute and department managers
+ */
 public class RoutesActivity extends ShenkarActivity {
 
     private ArrayList<RouteJson> mRoutes;
     private RoutesRecyclerAdapter adapter;
-
-//    private CollegeConfigJson mMainConfig;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +38,7 @@ public class RoutesActivity extends ShenkarActivity {
         adapter = new RoutesRecyclerAdapter(this, mRoutes);
         rvProjects.setAdapter(adapter);
 
-        // mMainConfig = (CollegeConfigJson) getIntent().getSerializableExtra("main_config");
-
+        // Set screen views from StaticCollegeConfigJson which hold CollegeConfigJson information
         if (StaticCollegeConfigJson.mMainConfig != null) {
             new DownloadImageTask((ImageView) findViewById(R.id.toolbaricon)).execute(StaticCollegeConfigJson.mMainConfig.getLogoUrl());
             TextView Suggested_Route_Headline = (TextView) findViewById(R.id.RoutesHeadline);
@@ -64,7 +63,6 @@ public class RoutesActivity extends ShenkarActivity {
 
     public void openRoutesRecyclerAdapter(View v) {
         Intent intent = new Intent(this, RoutesRecyclerAdapter.class);
-        //  intent.putExtra("main_config", mMainConfig);
         startActivity(intent);
     }
 }

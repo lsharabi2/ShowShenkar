@@ -105,7 +105,7 @@ public class ProjectActivity extends ShenkarActivity {
     private View.OnClickListener shareProject = new View.OnClickListener() {
     @Override
     public void onClick(View v) {
-        shareVideo();
+        shareLink();
     }
 };
     private ImageView dialogButtonPlay;
@@ -148,6 +148,10 @@ public class ProjectActivity extends ShenkarActivity {
         }
     };
 
+    /**
+     * SharedPref (My route) logic
+     */
+    // Add project id to sharedPref (add to my route)
     private void addProjectId(Long projectId) {
         projectIdsStr.add(Long.toString(projectId));
 
@@ -155,6 +159,7 @@ public class ProjectActivity extends ShenkarActivity {
         editor.commit();
     }
 
+    // Remove project from sharedPref (remove from my route)
     private void removeProjectId(Long projectId) {
         projectIdsStr.remove(Long.toString(projectId));
 
@@ -168,13 +173,12 @@ public class ProjectActivity extends ShenkarActivity {
         setContentView(R.layout.activity_project);
         sharedPrefInitialization();
 
-        // initialize all the project's views
+        // Initialize all the project's views
         views = new ProjectViewHolder(this);
 
         project = getIntent().getStringExtra("project");
         views.txtProjectName.setText(project);
         String students = getIntent().getStringExtra("students");
-        System.out.println("Liron students =" + students);
         views.txtStudentName.setText(students);
 
         projectId = getIntent().getLongExtra("id", 0);
@@ -187,21 +191,21 @@ public class ProjectActivity extends ShenkarActivity {
         checkIfLiked();
         btnLike.setOnClickListener(LikeProject);
 
-
-
         btnShare = (ImageButton) findViewById(R.id.btnShare);
         btnShare.setOnClickListener(shareProject);
         // Initialize recycler view
         RecyclerView rvProjects = (RecyclerView) findViewById(R.id.project_tumbs);
         rvProjects.setLayoutManager(new LinearLayoutManager(this));
 
+        // Image gallery
         mProjectImages = new ArrayList<>();
         adapter = new ProjectGalleryRecyclerAdapter(this, views.imgScreenShot, mProjectImages);
         rvProjects.setAdapter(adapter);
+
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setOnPreparedListener(preparedListenerPlayer);
 
-
+        // Set sound and video buttons
         playSD.setVisibility(View.GONE);
         playVd.setVisibility(View.GONE);
         playVdGray.setVisibility(View.GONE);
@@ -212,6 +216,9 @@ public class ProjectActivity extends ShenkarActivity {
         setObjectID();
     }
 
+    /**
+     * Check if like button is pressed or not and change is picture accordingly
+     */
     private void checkIfLiked() {
         for (String projectID : projectIdsStr) {
             if (projectID.equals(Long.toString(projectId))) {
@@ -224,6 +231,9 @@ public class ProjectActivity extends ShenkarActivity {
         btnLike.setTag("0"); // 0 is for dislike pic
     }
 
+    /**
+     * Initialize sharedPref
+     */
     private void sharedPrefInitialization() {
         SharedPreferences sharedPref = context.getSharedPreferences(
                 context.getString(R.string.preference_file_key), MODE_PRIVATE);
@@ -231,6 +241,9 @@ public class ProjectActivity extends ShenkarActivity {
         projectIdsStr = new HashSet<>(sharedPref.getStringSet(context.getString(R.string.preference_ids_key), new HashSet<String>()));
     }
 
+    /**
+     * Initialize views from StaticCollegeConfigJson which hold CollegeConfigJson information (general look of the screen)
+     */
     private void initialize() {
         if (StaticCollegeConfigJson.mMainConfig != null) {
             new DownloadImageTask((ImageView) findViewById(R.id.toolbaricon)).execute(StaticCollegeConfigJson.mMainConfig.getLogoUrl());
@@ -261,6 +274,9 @@ public class ProjectActivity extends ShenkarActivity {
         }
     }
 
+    /**
+     * Update project info OnPostExecute
+     */
     public void refreshProjectData() {
         if (mProject == null) {
             return;
@@ -268,18 +284,21 @@ public class ProjectActivity extends ShenkarActivity {
 
         views.txtProjectName.setText(mProject.getName());
 
+        // Convert student names into one string (for the headline)
         List<String> names = mProject.getStudentNames();
         String namesStr = "";
         for (String name : names) {
             namesStr += name + " ";
         }
-        System.out.println("Liron namesStr =" + namesStr);
+
+        // Put the student's name as long string
         views.txtStudentName.setText(namesStr);
 
         views.txtProjectDesc.setText(mProject.getDescription());
 
         adapter.refresh(mProject.getImagesUrls());
 
+        // Check if video exist, change his icon accordingly and run youtube activity if pressed
         if ((mProject.getVideoUrl() == null) || mProject.getVideoUrl().isEmpty()) {
             playVdGray.setVisibility(View.VISIBLE);
             playVdGray.setOnClickListener(new View.OnClickListener() {
@@ -301,6 +320,7 @@ public class ProjectActivity extends ShenkarActivity {
             });
         }
 
+        // Check if audio exist, change his icon accordingly and run media player if pressed
         if ((mProject.getSoundUrl() == null) || mProject.getSoundUrl().isEmpty()) {
             playSDGray.setVisibility(View.VISIBLE);
             playSDGray.setOnClickListener(new View.OnClickListener() {
@@ -318,6 +338,7 @@ public class ProjectActivity extends ShenkarActivity {
                 @Override
                 public void onClick(View v) {
                     final Dialog dialogT = new Dialog(context);
+                    // When sound button is pressed start dialog (media playe)
                     dialogT.setContentView(R.layout.custom);
                     dialogButtonPlay = (ImageView) dialogT.findViewById(R.id.imageButtonPlay);
                     imageButtonPause = (ImageView) dialogT.findViewById(R.id.imageButtonPause);
@@ -341,6 +362,9 @@ public class ProjectActivity extends ShenkarActivity {
         }
     }
 
+    /**
+     * Bring data from ProjectJson
+     */
     public void refreshProjectById() {
 
         final String url = JsonURIs.getProjectByIdUri(projectId);
@@ -396,20 +420,16 @@ public class ProjectActivity extends ShenkarActivity {
         }.execute();
     }
 
+    /**
+     * Share project
+     */
     public void shareProject(View v) {
-        shareVideo();
+        shareLink();
         Toast.makeText(this, "שתף פרויקט", Toast.LENGTH_LONG).show();
     }
 
 
-    private void shareVideo() {
-
-
-        if (mProject.getVideoUrl() == null) {
-
-            return;
-        }
-
+    private void shareLink() {
 
         String urlYoutube = "זהו פרויקט הגמר שלי אשר עליו עמלתי רבות, אשמח אם תוכלו לשתפו עם אחרים במידה ונהניתם: " + "https://shenkar-show-web-new.herokuapp.com/index.html#/projectDetails/" + mProject.getId();  //"https://www.youtube.com/watch?v=" + mProject.getVideoUrl();
         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
@@ -418,6 +438,9 @@ public class ProjectActivity extends ShenkarActivity {
         startActivity(Intent.createChooser(shareIntent, "Share via"));
     }
 
+    /**
+     * Show project location
+     */
     @Override
     void setObjectID() {
         this.objectType = "project";
@@ -431,6 +454,9 @@ public class ProjectActivity extends ShenkarActivity {
 
     }
 
+    /**
+     * Send email to creators
+     */
     public void sendEmail(View v) {
         if (mProject.getStudentEmails() == null || mProject.getStudentEmails().isEmpty()) {
             Toast.makeText(this, "אין מיילים זמינים לפרויקט", Toast.LENGTH_LONG).show();
@@ -455,6 +481,9 @@ public class ProjectActivity extends ShenkarActivity {
         }
     }
 
+    /**
+     * Project View Holder
+     */
     class ProjectViewHolder {
         TextView txtProjectName;
         TextView txtStudentName;
@@ -466,6 +495,8 @@ public class ProjectActivity extends ShenkarActivity {
             txtStudentName = (TextView) activity.findViewById(R.id.txtStudentName);
             txtProjectDesc = (TextView) activity.findViewById(R.id.txtProjectDesc);
             imgScreenShot = (ImageView) activity.findViewById(R.id.imgScreenShot);
+
+            // if image was pressed open ProjectImageActivity with the choosen image
             imgScreenShot.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

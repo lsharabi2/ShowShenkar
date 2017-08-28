@@ -295,7 +295,8 @@ public class MapActivity extends ShenkarActivity implements OnMapReadyCallback, 
             public synchronized URL getTileUrl(int x, int y, int zoom) {
                 int reversedY = (1 << zoom) - y - 2;
                 // Here you can change the url to your institute's server which holds the maps
-                String s = String.format(Locale.US, "http://megastar.co.il/EPSG3857/" + path + "/%d/%d/%d.png", zoom, x, y);  // "http://shenkar.xyz/maps/1/"
+                String s = String.format(Locale.US, "http://megastar.co.il/EPSG3857/" + path + "/%d/%d/%d.png", zoom, x, y);
+                //  You can try another server which we upload the maps into if server fail: "http://shenkar.xyz/maps/1/"
                 URL url = null;
                 try {
                     url = new URL(s);
